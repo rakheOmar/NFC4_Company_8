@@ -338,16 +338,16 @@ function MineOpsDashboard({ userId, handleLogout }) {
     const alertsRef = collection(db, `artifacts/${appId}/users/${userId}/alerts`);
 
     let prompt = `Simulate a coal mine monitoring system. Based on the following data, generate a concise safety alert message if there's a critical issue, otherwise state 'No critical alerts'.
-        Worker: ${workerData.name}, Location: ${workerData.location}, Status: ${workerData.status}, Heart Rate: ${workerData.heartRate} bpm, Has Protective Equipment: ${workerData.protectiveEquipment}.
-        Environmental Sensor: Location: ${envData.location}, Gas Level: ${envData.gasLevel} ppm, Air Quality: ${envData.airQuality} AQI.
-        Machinery: ${machineData.name}, Status: ${machineData.status}, Fuel Level: ${machineData.fuelLevel}%.
+          Worker: ${workerData.name}, Location: ${workerData.location}, Status: ${workerData.status}, Heart Rate: ${workerData.heartRate} bpm, Has Protective Equipment: ${workerData.protectiveEquipment}.
+          Environmental Sensor: Location: ${envData.location}, Gas Level: ${envData.gasLevel} ppm, Air Quality: ${envData.airQuality} AQI.
+          Machinery: ${machineData.name}, Status: ${machineData.status}, Fuel Level: ${machineData.fuelLevel}%.
 
-        Critical thresholds:
-        - Gas Level > 70 ppm
-        - Worker Heart Rate > 95 bpm
-        - Worker missing protective equipment
-        - Machinery needs maintenance
-        `;
+          Critical thresholds:
+          - Gas Level > 70 ppm
+          - Worker Heart Rate > 95 bpm
+          - Worker missing protective equipment
+          - Machinery needs maintenance
+          `;
 
     if (
       gasLevel > 70 ||
@@ -358,9 +358,9 @@ function MineOpsDashboard({ userId, handleLogout }) {
       prompt += `\n\nGenerate an alert message.`;
     } else {
       prompt = `Given the following coal mine data, generate a brief status update. If there are no critical issues, state 'All systems normal'.
-            Worker: ${workerData.name}, Location: ${workerData.location}, Status: ${workerData.status}, Heart Rate: ${workerData.heartRate} bpm, Has Protective Equipment: ${workerData.protectiveEquipment}.
-            Environmental Sensor: Location: ${envData.location}, Gas Level: ${envData.gasLevel} ppm, Air Quality: ${envData.airQuality} AQI.
-            Machinery: ${machineData.name}, Status: ${machineData.status}, Fuel Level: ${machineData.fuelLevel}%.`;
+              Worker: ${workerData.name}, Location: ${workerData.location}, Status: ${workerData.status}, Heart Rate: ${workerData.heartRate} bpm, Has Protective Equipment: ${workerData.protectiveEquipment}.
+              Environmental Sensor: Location: ${envData.location}, Gas Level: ${envData.gasLevel} ppm, Air Quality: ${envData.airQuality} AQI.
+              Machinery: ${machineData.name}, Status: ${machineData.status}, Fuel Level: ${machineData.fuelLevel}%.`;
     }
 
     try {
@@ -517,11 +517,11 @@ function MineOpsDashboard({ userId, handleLogout }) {
       messageBox.className =
         "fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50";
       messageBox.innerHTML = `
-                <div class="bg-gray-800 p-6 rounded-lg shadow-2xl border border-gray-700 text-white text-center">
-                    <p class="text-xl font-semibold mb-4">Incident Reported Successfully!</p>
-                    <button id="closeMessageBox" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Close</button>
-                </div>
-            `;
+                  <div class="bg-gray-800 p-6 rounded-lg shadow-2xl border border-gray-700 text-white text-center">
+                      <p class="text-xl font-semibold mb-4">Incident Reported Successfully!</p>
+                      <button id="closeMessageBox" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Close</button>
+                  </div>
+              `;
       document.body.appendChild(messageBox);
       document.getElementById("closeMessageBox").onclick = () => {
         document.body.removeChild(messageBox);
@@ -552,24 +552,24 @@ function MineOpsDashboard({ userId, handleLogout }) {
     <div className="min-h-screen bg-gray-900 text-gray-100 font-inter flex flex-col">
       <style>
         {`
-                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-                body { font-family: 'Inter', sans-serif; }
-                /* Custom scrollbar for better aesthetics */
-                ::-webkit-scrollbar {
-                    width: 8px;
-                }
-                ::-webkit-scrollbar-track {
-                    background: #2d3748; /* Darker gray for track */
-                    border-radius: 10px;
-                }
-                ::-webkit-scrollbar-thumb {
-                    background: #4a5568; /* Medium gray for thumb */
-                    border-radius: 10px;
-                }
-                ::-webkit-scrollbar-thumb:hover {
-                    background: #6b7280; /* Lighter gray on hover */
-                }
-                `}
+                  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+                  body { font-family: 'Inter', sans-serif; }
+                  /* Custom scrollbar for better aesthetics */
+                  ::-webkit-scrollbar {
+                      width: 8px;
+                  }
+                  ::-webkit-scrollbar-track {
+                      background: #2d3748; /* Darker gray for track */
+                      border-radius: 10px;
+                  }
+                  ::-webkit-scrollbar-thumb {
+                      background: #4a5568; /* Medium gray for thumb */
+                      border-radius: 10px;
+                  }
+                  ::-webkit-scrollbar-thumb:hover {
+                      background: #6b7280; /* Lighter gray on hover */
+                  }
+                  `}
       </style>
       <header className="bg-gray-800 p-4 shadow-md flex justify-between items-center rounded-b-lg">
         <h1 className="text-2xl font-bold text-blue-400">MineOps Dashboard</h1>

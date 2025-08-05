@@ -1,129 +1,77 @@
-import { useState } from "react";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { DribbbleIcon, GithubIcon, TwitchIcon, TwitterIcon } from "lucide-react";
-
-const footerLinks = [
-  {
-    title: "Overview",
-    href: "#",
-  },
-  {
-    title: "Features",
-    href: "#",
-  },
-  {
-    title: "Pricing",
-    href: "#",
-  },
-  {
-    title: "Careers",
-    href: "#",
-  },
-  {
-    title: "Help",
-    href: "#",
-  },
-  {
-    title: "Privacy",
-    href: "#",
-  },
-];
+import React from "react";
+import { Link } from "react-router-dom";
+import { ShieldCheck, Mail, Phone } from "lucide-react";
 
 const Footer = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setLoading(true);
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/newsletter`, {
-        email,
-      });
-      setEmail("");
-      // You can add a toast here if needed
-    } catch (error) {
-      // Optionally handle error
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <footer>
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-12 flex flex-col sm:flex-row items-start justify-between gap-x-8 gap-y-10 px-6 xl:px-0">
-          <div>
-            <svg
-              id="logo-7"
-              width="124"
-              height="32"
-              viewBox="0 0 124 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* SVG PATHS */}
-            </svg>
-
-            <ul className="mt-6 flex items-center gap-4 flex-wrap">
-              {footerLinks.map(({ title, href }) => (
-                <li key={title}>
-                  <a href={href} className="text-muted-foreground hover:text-foreground">
-                    {title}
-                  </a>
-                </li>
-              ))}
-            </ul>
+    <footer className="bg-black text-white px-8 py-10">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-8 text-sm">
+        {/* Company Info */}
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <ShieldCheck className="text-[#a44406]" />
+            <span className="font-semibold text-lg">CoalGuard</span>
           </div>
+          <p className="text-gray-400">
+            Advanced safety and sustainability platform for modern coal mining operations.
+          </p>
+        </div>
 
-          <div className="max-w-xs w-full">
-            <h6 className="font-semibold">Stay up to date</h6>
-            <form onSubmit={handleSubmit} className="mt-6 flex items-center gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Button type="submit" disabled={loading}>
-                {loading ? "Sending..." : "Subscribe"}
-              </Button>
-            </form>
+        {/* Contact Info */}
+        <div>
+          <h4 className="font-semibold mb-2">Contact Us</h4>
+          <div className="flex items-center text-gray-400 space-x-2 mb-1">
+            <Mail size={16} />
+            <span>contact@coalguard.tech</span>
+          </div>
+          <div className="flex items-center text-gray-400 space-x-2">
+            <Phone size={16} />
+            <span>+91 98765 43210</span>
           </div>
         </div>
 
-        <Separator />
-
-        <div className="py-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
-          <span className="text-muted-foreground">
-            &copy; {new Date().getFullYear()}{" "}
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              Shadcn UI Blocks
-            </a>
-            . All rights reserved.
-          </span>
-
-          <div className="flex items-center gap-5 text-muted-foreground">
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <TwitterIcon className="h-5 w-5" />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <DribbbleIcon className="h-5 w-5" />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <TwitchIcon className="h-5 w-5" />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="h-5 w-5" />
-            </a>
-          </div>
+        {/* Take Our Survey */}
+        <div>
+          <h4 className="font-semibold mb-2">Take Our Survey</h4>
+          <p className="text-gray-400 mb-2">Help us improve by sharing your feedback.</p>
+          <button
+            onClick={() => window.open("/survey", "_blank")}
+            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+          >
+            Take Our Survey
+          </button>
         </div>
+
+        {/* Quick Links */}
+        <div>
+          <h4 className="font-semibold mb-2">Quick Links</h4>
+          <ul className="text-gray-400 space-y-1">
+            <li>
+              <Link to="/privacy-policy" className="hover:text-orange-500 transition">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms-of-service" className="hover:text-orange-500 transition">
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link to="/careers" className="hover:text-orange-500 transition">
+                Careers
+              </Link>
+            </li>
+            <li>
+              <Link to="/support" className="hover:text-orange-500 transition">
+                Support
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="text-center text-gray-600 text-xs mt-8 border-t border-gray-800 pt-4">
+        Â© 2024 CoalGuard. All rights reserved.
       </div>
     </footer>
   );

@@ -1,35 +1,8 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-
-// COMPONENTS
-import Navbar from "@/components/blocks/Navbar/Navbar";
-import Footer from "@/components/Footer";
-import ChatBotButton from "@/components/ChatBotButton";
 import { Toaster } from "sonner";
 
-// PAGES
-import Login from "@/pages/Login";
-import SignUp from "@/pages/SignUp";
-import Home from "@/pages/Home";
-
-const hiddenLayoutRoutes = ["/login", "/signup"];
-
-const Layout = ({ children }) => {
-  const location = useLocation();
-  const hideLayout = hiddenLayoutRoutes.includes(location.pathname);
-
-  const shouldHideLayout = hideLayout;
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Toaster position="top-center" richColors />
-      {!shouldHideLayout && <Navbar />}
-      <main className={`flex-1 ${shouldHideLayout ? "" : ""}`}>{children}</main>
-      {!shouldHideLayout && <Footer />}
-      {!shouldHideLayout && <ChatBotButton />}
-    </div>
-  );
-};
-
+// Utility Functions
 function pcmToWav(pcmData, sampleRate) {
   const numChannels = 1;
   const bytesPerSample = 2;
@@ -82,18 +55,14 @@ const callApiWithBackoff = async (apiCall, maxRetries = 5, delay = 1000) => {
       const response = await apiCall();
       if (!response.ok) {
         if (response.status === 429 || response.status >= 500) {
-          throw new Error(
-            `API call failed with status ${response.status}. Retrying...`
-          );
+          throw new Error(`API call failed with status ${response.status}. Retrying...`);
         }
       }
       return response;
     } catch (error) {
       console.warn(`Attempt ${i + 1} failed: ${error.message}`);
       if (i < maxRetries - 1) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, delay * Math.pow(2, i))
-        );
+        await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
       } else {
         throw error;
       }
@@ -101,14 +70,69 @@ const callApiWithBackoff = async (apiCall, maxRetries = 5, delay = 1000) => {
   }
 };
 
+// Components & Pages
+import Navbar from "@/components/blocks/Navbar/Navbar";
+import Footer from "@/components/Footer";
+import ChatBotButton from "@/components/ChatBotButton";
+
+// Dashboards
+import WorkerDashboard from "@/components/Dashboard";
+import AdminDashboard from "@/components/AdminDashboard";
+import MineOpsDashboard from "@/pages/MineOpsDashboard";
+import Careers from "./pages/Careers";
+// Main Pages
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import SignUp from "@/pages/SignUp";
+import SurveyPage from "@/pages/SurveyPage";
+
+// Legal / Info Pages
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
+// import Careers from "@/pages/Careers";
+import Support from "@/pages/Support";
+
+const hiddenLayoutRoutes = ["/login", "/signup"];
+
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const hideLayout = hiddenLayoutRoutes.includes(location.pathname);
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Toaster position="top-center" richColors />
+      {!hideLayout && <Navbar />}
+      <main className="flex-1">{children}</main>
+      {!hideLayout && <Footer />}
+      {!hideLayout && <ChatBotButton />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <Layout>
         <Routes>
+          {/* Main Landing Page */}
           <Route path="/" element={<Home />} />
+
+          {/* Dashboards */}
+          <Route path="/worker-dashboard" element={<WorkerDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/mine-dashboard" element={<MineOpsDashboard />} />
+
+          {/* Authentication Pages (Layout hidden) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+
+          {/* Legal & Information Pages */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/support" element={<Support />} />
+
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/careers" element={<Careers />} />
         </Routes>
       </Layout>
     </Router>

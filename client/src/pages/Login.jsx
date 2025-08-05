@@ -39,9 +39,20 @@ export default function Login() {
     try {
       const res = await axios.post("/users/login", data);
       console.log("Login Success:", res.data);
-      setUser(res.data?.data?.user);
+
+      const user = res.data?.data?.user;
+      setUser(user);
+
       toast.success("Logged in successfully!");
-      setTimeout(() => navigate("/"), 2000);
+
+      // Role-based navigation (capitalized roles)
+      if (user?.role === "Admin") {
+        navigate("/admin");
+      } else if (user?.role === "Worker") {
+        navigate("/worker-dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       const message = err?.response?.data?.message?.toString?.() || err?.message || "Login failed.";
 
