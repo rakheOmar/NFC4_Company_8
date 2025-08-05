@@ -24,84 +24,84 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  // MODIFIED: Added employeeId, site, and role to destructuring
-  const { email, fullname, password, employeeId, site, role } = req.body;
+  const { email, fullname, password, countryCode, phoneNumber, address } = req.body;
 
-  // MODIFIED: Updated validation check
   if (
-    [email, fullname, password, employeeId, site, role].some(
+    [email, fullname, password, countryCode, phoneNumber, address].some(
       (field) => !field || field.trim() === ""
     )
   ) {
-    throw new ApiError(400, "Please fill all the required fields");
+    throw new ApiError("Please fill all the fields", 400);
   }
 
-  // MODIFIED: Check for employeeId as well as email
   const existingUser = await User.findOne({
-    $or: [{ email }, { employeeId }],
+    $or: [{ email }, { phoneNumber }],
   });
 
   if (existingUser) {
-    throw new ApiError(409, "User with this email or employee ID already exists");
+    throw new ApiError("User already exists", 409);
   }
 
   const avatarLocalPath = req.file?.path;
+
   if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar image is required");
+    throw new ApiError("Please upload avatar", 400);
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
+
   if (!avatar) {
-    throw new ApiError(500, "Error while uploading avatar");
+    throw new ApiError("Please upload avatar", 400);
   }
 
-  // MODIFIED: Added new fields to the create call
   const user = await User.create({
     fullname,
     email: email.toLowerCase(),
+    countryCode,
+    phoneNumber,
+    address,
     password,
     avatar: avatar.url,
-    // --- New Fields ---
-    employeeId,
-    site,
-    role,
   });
 
   const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
   if (!createdUser) {
-    throw new ApiError(500, "User creation failed after registration");
+    throw new ApiError("User creation failed", 500);
   }
 
   return res.status(201).json(new ApiResponse(201, "User registered successfully", createdUser));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  // MODIFIED: Allow login with email or employeeId
-  const { email, employeeId, password } = req.body;
+  const { email, phoneNumber, password } = req.body;
 
-  if (!password || (!email && !employeeId)) {
-    throw new ApiError(400, "Email or Employee ID and password are required");
+  if (!email && !phoneNumber) {
+    throw new ApiError("Please fill at least either Email or Phone Number", 400);
   }
 
   const user = await User.findOne({
-    $or: [{ email }, { employeeId }],
+    $or: [{ email }, { phoneNumber }],
   });
 
   if (!user) {
-    throw new ApiError(404, "User not found");
+    throw new ApiError("User not found", 404);
   }
 
   const isPassValid = await user.isPasswordCorrect(password);
 
   if (!isPassValid) {
-    throw new ApiError(401, "Invalid user credentials");
+    throw new ApiError("Invalid password", 401);
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
   const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-  const options = { httpOnly: true, secure: process.env.NODE_ENV === "production" };
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
 
   return res
     .status(200)
@@ -111,6 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
       new ApiResponse(200, "User logged in successfully", {
         user: loggedInUser,
         accessToken,
+        refreshToken,
       })
     );
 });
@@ -261,83 +262,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, "User profile fetched successfully", user));
 });
 
-const getAllWorkersBySite = asyncHandler(async (req, res) => {
-  const { siteId } = req.params;
-  if (!siteId) {
-    throw new ApiError(400, "Site ID is required");
-  }
-
-  // Find all users for a site, excluding admins, and don't send back sensitive data
-  const workers = await User.find({
-    site: siteId,
-    role: { $in: ["Worker", "Supervisor", "Manager"] },
-  }).select("-password -refreshToken -address");
-
-  if (!workers) {
-    // This isn't an error, just might be an empty site
-    return res.status(200).json(new ApiResponse(200, "No workers found for this site", []));
-  }
-
-  return res.status(200).json(new ApiResponse(200, "Workers fetched successfully", workers));
-});
-
-const updateUserLocation = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  const { coordinates } = req.body; // Expecting [longitude, latitude]
-
-  if (!coordinates || !Array.isArray(coordinates) || coordinates.length !== 2) {
-    throw new ApiError(400, "Valid coordinates array [longitude, latitude] is required");
-  }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      $set: {
-        currentLocation: {
-          type: "Point",
-          coordinates: coordinates,
-        },
-        isOnline: true,
-      },
-    },
-    { new: true }
-  ).select("employeeId fullname currentLocation isOnline");
-
-  if (!updatedUser) {
-    throw new ApiError(404, "User not found to update location");
-  }
-
-  return res.status(200).json(new ApiResponse(200, "Location updated successfully", updatedUser));
-});
-
-const updatePpeStatus = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  const { helmet, vest, mask } = req.body;
-
-  const updatePayload = {};
-  if (typeof helmet === "boolean") updatePayload["ppeStatus.helmet"] = helmet;
-  if (typeof vest === "boolean") updatePayload["ppeStatus.vest"] = vest;
-  if (typeof mask === "boolean") updatePayload["ppeStatus.mask"] = mask;
-
-  if (Object.keys(updatePayload).length === 0) {
-    throw new ApiError(400, "At least one PPE status (helmet, vest, mask) must be provided");
-  }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    { $set: updatePayload },
-    { new: true }
-  ).select("employeeId ppeStatus");
-
-  if (!updatedUser) {
-    throw new ApiError(404, "User not found to update PPE status");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, "PPE status updated successfully", updatedUser.ppeStatus));
-});
-
 export {
   registerUser,
   loginUser,
@@ -348,7 +272,4 @@ export {
   updateCurrentUser,
   updateUserAvatar,
   getUserProfile,
-  getAllWorkersBySite,
-  updateUserLocation,
-  updatePpeStatus,
 };
