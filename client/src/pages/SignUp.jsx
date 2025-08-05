@@ -16,6 +16,14 @@ import { z } from "zod";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import axios from "@/lib/axios"; // Added missing axios import
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   fullname: z.string().min(1, "Full name is required"),
@@ -41,11 +49,7 @@ const SignUp = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Submit data as JSON (since there are no files)
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/users/register`,
-        data
-      );
+      const res = await axios.post("/users/register", data);
       console.log("User registered:", res.data);
       toast.success("User registered successfully!");
       setTimeout(() => {
@@ -122,12 +126,20 @@ const SignUp = () => {
                 <FormItem>
                   <FormLabel>Role</FormLabel>
                   <FormControl>
-                    <select {...field} className="input">
-                      <option value="">Select role</option>
-                      <option value="employee">Employee</option>
-                      <option value="manager">Manager</option>
-                      <option value="admin">Admin</option>
-                    </select>
+                    {/* Replaced native select with shadcn Select component */}
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* Corrected values to match backend enum */}
+                        <SelectItem value="Worker">Worker</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

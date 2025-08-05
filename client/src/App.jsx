@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import Home from "@/pages/Home";
+import SimulationDashboard from "@/pages/SimulationDashboard";
 
 const hiddenLayoutRoutes = ["/login", "/signup"];
 
@@ -109,6 +110,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/sim" element={<SimulationDashboard />} />
         </Routes>
       </Layout>
     </Router>
