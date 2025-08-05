@@ -1,11 +1,12 @@
 import React from "react";
-
+import Header from "./Header.jsx";
+import "../App.css";
 import InfoCard from "./InfoCard.jsx";
 import WorkInstructions from "./WorkInstructions.jsx";
 import SalaryAttendance from "./SalaryAttendance.jsx";
 import VideoCommunication from "@/components/VideoComponent.jsx";
 import EnvironmentalStatus from "./EnvironmentalStatus.jsx";
-
+import Sidebar from "./Sidebar.jsx";
 // Import Icons
 import { FaRegClock, FaShieldAlt, FaUsers, FaExclamationTriangle } from "react-icons/fa";
 
