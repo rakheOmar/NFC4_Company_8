@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -23,7 +24,7 @@ const HeroSection = () => {
         </p>
       </div>
 
-      {/* Bottom Dark Section (Your Original Content) */}
+      {/* Bottom Dark Section */}
       <div className="bg-[#a44406] text-white py-20 px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-4">
           Ready to Transform Your Mining Operations?
@@ -31,9 +32,11 @@ const HeroSection = () => {
         <p className="text-lg mb-8">
           Join the future of coal mining with our comprehensive safety and sustainability platform.
         </p>
-        <button className="bg-white text-black font-medium px-6 py-3 rounded-md hover:bg-gray-200 transition">
-          Explore Dashboard →
-        </button>
+        <Link to="/sentiment-summary">
+          <button className="bg-white text-black font-medium px-6 py-3 rounded-md hover:bg-gray-200 transition">
+            Explore Dashboard →
+          </button>
+        </Link>
       </div>
     </section>
   );

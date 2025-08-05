@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 function SurveyPage() {
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState('en');
   const [usesTools, setUsesTools] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -23,23 +23,21 @@ function SurveyPage() {
       thankYou: "Thank you for submitting the survey!",
     },
     hi: {
-      heading:
-        "рдЦрдирди рдХреНрд╖реЗрддреНрд░ рд╕реБрд░рдХреНрд╖рд╛ рдФрд░ рд╕реНрдерд┐рд░рддрд╛ рд╕рд░реНрд╡реЗрдХреНрд╖рдг",
-      name: "рдирд╛рдо",
-      phone: "рдлрд╝реЛрди рдирдВрдмрд░",
-      location: "рдЖрдкрдХрд╛ рд╕реНрдерд╛рди",
-      q1: "рдХреНрдпрд╛ рдЖрдк рдЦрд╛рди рдХреНрд╖реЗрддреНрд░ рдХреЗ рдкрд╛рд╕ рд░рд╣рддреЗ рд╣реИрдВ рдпрд╛ рдХрд╛рдо рдХрд░рддреЗ рд╣реИрдВ?",
-      q2: "рдХреНрдпрд╛ рдЖрдкрдХреЛ рдЦрд╛рди рдХреЗ рдЖрд╕рдкрд╛рд╕ рдзреВрд▓, рдзреБрдЖрдВ рдпрд╛ рдкреНрд░рджреВрд╖рдг рджрд┐рдЦрд╛рдИ рджреЗрддрд╛ рд╣реИ?",
-      q3: "рдХреНрдпрд╛ рдЖрдк рд╕реБрд░рдХреНрд╖рд╛ рдпрд╛ рд╕реНрдерд┐рд░рддрд╛ рдХреЗ рд▓рд┐рдП рдХреЛрдИ рдЙрдкрдХрд░рдг рдЙрдкрдпреЛрдЧ рдХрд░рддреЗ рд╣реИрдВ?",
-      q3a: "рдХреГрдкрдпрд╛ рдЙрдкрдпреЛрдЧ рдХрд┐рдП рдЧрдП рдЙрдкрдХрд░рдгреЛрдВ рдХреЛ рдирд┐рд░реНрджрд┐рд╖реНрдЯ рдХрд░реЗрдВ:",
-      q4: "рдЖрдк рдЦрд╛рди рдХреНрд╖реЗрддреНрд░ рдХреЗ рдЖрд╕рдкрд╛рд╕ рдпрд╛ рдЕрдВрджрд░ рдХрд┐рддрдиреА рд╕реБрд░рдХреНрд╖рд┐рдд рдорд╣рд╕реВрд╕ рдХрд░рддреЗ рд╣реИрдВ?",
-      q5: "рдЦрд╛рди рдЖрдкрдХреЛ рдХрд┐рддрдирд╛ рд╕реНрд╡рдЪреНрдЫ рдпрд╛ рдкрд░реНрдпрд╛рд╡рд░рдг рдХреЗ рдЕрдиреБрдХреВрд▓ рд▓рдЧрддрд╛ рд╣реИ?",
-      submit: "рд╕рд░реНрд╡реЗрдХреНрд╖рдг рд╕рдмрдорд┐рдЯ рдХрд░реЗрдВ",
-      yes: "рд╣рд╛рдБ",
-      no: "рдирд╣реАрдВ",
-      thankYou:
-        "рд╕рд░реНрд╡реЗрдХреНрд╖рдг рд╕рдмрдорд┐рдЯ рдХрд░рдиреЗ рдХреЗ рд▓рд┐рдП рдзрдиреНрдпрд╡рд╛рдж!",
-    },
+      heading: "खनन क्षेत्र सुरक्षा और स्थिरता सर्वेक्षण",
+      name: "नाम",
+      phone: "फ़ोन नंबर",
+      location: "आपका स्थान",
+      q1: "क्या आप खान क्षेत्र के पास रहते हैं या काम करते हैं?",
+      q2: "क्या आपको खान के आसपास धूल, धुआं या प्रदूषण दिखाई देता है?",
+      q3: "क्या आप सुरक्षा या स्थिरता के लिए कोई उपकरण उपयोग करते हैं?",
+      q3a: "कृपया उपयोग किए गए उपकरणों को निर्दिष्ट करें:",
+      q4: "आप खान क्षेत्र के आसपास या अंदर कितनी सुरक्षित महसूस करते हैं?",
+      q5: "खान आपको कितना स्वच्छ या पर्यावरण के अनुकूल लगता है?",
+      submit: "सर्वेक्षण सबमिट करें",
+      yes: "हाँ",
+      no: "नहीं",
+      thankYou: "सर्वेक्षण सबमिट करने के लिए धन्यवाद!",
+    }
   }[language];
 
   const handleSubmit = (e) => {
@@ -48,122 +46,104 @@ function SurveyPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f4f4f6",
-        padding: "2rem",
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: "700px", color: "#1f2937" }}>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            style={{ padding: "0.4rem" }}
-          >
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: '#f4f4f6',
+      padding: '2rem',
+    }}>
+      <div style={{ width: '100%', maxWidth: '700px', color: '#1f2937' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ padding: '0.4rem' }}>
             <option value="en">English</option>
-            <option value="hi">рд╣рд┐рдиреНрджреА</option>
+            <option value="hi">हिन्दी</option>
           </select>
         </div>
 
         <h2
           style={{
-            marginBottom: "1.5rem",
-            color: "#374151",
-            textAlign: "center",
-            fontSize: "2rem",
-            fontWeight: "bold",
+            marginBottom: '1.5rem',
+            color: '#374151',
+            textAlign: 'center',
+            fontSize: '2rem',
+            fontWeight: 'bold',
           }}
         >
           {labels.heading}
         </h2>
 
         {submitted ? (
-          <div style={{ textAlign: "center", fontSize: "1.25rem", color: "#10b981" }}>
-            тЬЕ {labels.thankYou}
+          <div style={{ textAlign: 'center', fontSize: '1.25rem', color: '#10b981' }}>
+            ✅ {labels.thankYou}
           </div>
         ) : (
-          <form
-            onSubmit={handleSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-          >
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <input type="text" placeholder={labels.name} style={inputStyle} required />
             <input type="tel" placeholder={labels.phone} style={inputStyle} required />
             <input type="text" placeholder={labels.location} style={inputStyle} required />
 
             <div>
               <label>{labels.q1}</label>
-              <div style={{ marginTop: "0.4rem" }}>
+              <div style={{ marginTop: '0.4rem' }}>
                 <input type="radio" name="q1" required /> {labels.yes}
-                <input type="radio" name="q1" style={{ marginLeft: "1rem" }} /> {labels.no}
+                <input type="radio" name="q1" style={{ marginLeft: '1rem' }} /> {labels.no}
               </div>
             </div>
 
             <div>
               <label>{labels.q2}</label>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <input type="range" min="1" max="5" style={sliderStyle} />
                 <div style={emojiRow}>
-                  <span>ЁЯШР Slight</span>
-                  <span>ЁЯШ╖ Moderate</span>
-                  <span>ЁЯдв Heavy</span>
+                  <span>😐 Slight</span>
+                  <span>😷 Moderate</span>
+                  <span>🤢 Heavy</span>
                 </div>
               </div>
             </div>
 
             <div>
               <label>{labels.q3}</label>
-              <div style={{ marginTop: "0.4rem" }}>
-                <input type="radio" name="tools" onChange={() => setUsesTools(true)} required />{" "}
-                {labels.yes}
-                <input
-                  type="radio"
-                  name="tools"
-                  style={{ marginLeft: "1rem" }}
-                  onChange={() => setUsesTools(false)}
-                />{" "}
-                {labels.no}
+              <div style={{ marginTop: '0.4rem' }}>
+                <input type="radio" name="tools" onChange={() => setUsesTools(true)} required /> {labels.yes}
+                <input type="radio" name="tools" style={{ marginLeft: '1rem' }} onChange={() => setUsesTools(false)} /> {labels.no}
               </div>
               {usesTools && (
                 <input
                   type="text"
                   placeholder={labels.q3a}
-                  style={{ ...inputStyle, marginTop: "0.5rem", width: "40%" }}
+                  style={{ ...inputStyle, marginTop: '0.5rem', width: '40%' }}
                 />
               )}
             </div>
 
             <div>
               <label>{labels.q4}</label>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <input type="range" min="1" max="5" style={sliderStyle} />
                 <div style={emojiRow}>
-                  <span>ЁЯШЯ Unsafe</span>
-                  <span>ЁЯШР Okay</span>
-                  <span>ЁЯШМ Very Safe</span>
+                  <span>😟 Unsafe</span>
+                  <span>😐 Okay</span>
+                  <span>😌 Very Safe</span>
                 </div>
               </div>
             </div>
 
             <div>
               <label>{labels.q5}</label>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <input type="range" min="1" max="5" style={sliderStyle} />
                 <div style={emojiRow}>
-                  <span>ЁЯТи Polluted</span>
-                  <span>ЁЯШР Normal</span>
-                  <span>ЁЯМ┐ Clean</span>
+                  <span>💨 Polluted</span>
+                  <span>😐 Normal</span>
+                  <span>🌿 Clean</span>
                 </div>
               </div>
             </div>
 
-            <button type="submit" style={submitStyle}>
-              {labels.submit}
-            </button>
+            <button type="submit" style={submitStyle}>{labels.submit}</button>
           </form>
         )}
       </div>
@@ -172,35 +152,35 @@ function SurveyPage() {
 }
 
 const inputStyle = {
-  padding: "0.6rem 1rem",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  background: "#ffffff",
+  padding: '0.6rem 1rem',
+  borderRadius: '8px',
+  border: '1px solid #d1d5db',
+  background: '#ffffff',
 };
 
 const sliderStyle = {
-  width: "100%",
-  marginTop: "0.5rem",
-  accentColor: "#6b7280",
+  width: '100%',
+  marginTop: '0.5rem',
+  accentColor: '#6b7280',
 };
 
 const emojiRow = {
-  display: "flex",
-  justifyContent: "space-between",
-  width: "100%",
-  fontSize: "0.9rem",
-  marginTop: "0.3rem",
+  display: 'flex',
+  justifyContent: 'space-between',
+  width: '100%',
+  fontSize: '0.9rem',
+  marginTop: '0.3rem',
 };
 
 const submitStyle = {
-  padding: "0.7rem",
-  borderRadius: "6px",
-  backgroundColor: "#64748b",
-  color: "#fff",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
-  marginTop: "1rem",
+  padding: '0.7rem',
+  borderRadius: '6px',
+  backgroundColor: '#64748b',
+  color: '#fff',
+  border: 'none',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  marginTop: '1rem',
 };
 
 export default SurveyPage;

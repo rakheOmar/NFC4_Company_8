@@ -9,17 +9,20 @@ import ChatBotButton from "@/components/ChatBotButton";
 import WorkerDashboard from "@/components/Dashboard";
 import AdminDashboard from "@/components/AdminDashboard";
 import MineOpsDashboard from "@/pages/MineOpsDashboard";
-import Careers from "./pages/Careers";
+import Careers from "@/pages/Careers";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import SurveyPage from "@/pages/SurveyPage";
+import ThankYou from "@/pages/ThankYou";  
+import SentimentSummary from "@/components/SentimentSummary";
 
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import Support from "@/pages/Support";
 import SimulationDashboard from "@/pages/SimulationDashboard";
 
+// Audio utilities (unchanged)
 function pcmToWav(pcmData, sampleRate) {
   const numChannels = 1;
   const bytesPerSample = 2;
@@ -115,6 +118,8 @@ function App() {
           <Route path="/sim" element={<SimulationDashboard />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/sentiment-summary" element={<SentimentSummary />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/support" element={<Support />} />
