@@ -14,48 +14,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   fullname: z.string().min(1, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
-  phoneNumber: z.string().min(10, "Enter a valid phone number"),
-  countryCode: z.string().min(1, "Country code is required"),
-  address: z.string().min(1, "Address is required"),
-  avatar: z.instanceof(File).optional(),
+  employeeId: z.string().min(1, "Employee ID is required"),
+  role: z.string().min(1, "Role is required"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
 const SignUp = () => {
-  const [avatarPreview, setAvatarPreview] = useState(null);
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullname: "",
       email: "",
-      countryCode: "+91",
-      phoneNumber: "",
-      address: "",
+      employeeId: "",
+      role: "",
       password: "",
-      avatar: undefined,
     },
   });
 
   const navigate = useNavigate();
-  const onSubmit = async (data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (data[key]) {
-        formData.append(key, data[key]);
-      }
-    });
 
+  const onSubmit = async (data) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/users/register`, formData);
+      // Submit data as JSON (since there are no files)
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/users/register`,
+        data
+      );
       console.log("User registered:", res.data);
       toast.success("User registered successfully!");
       setTimeout(() => {
@@ -66,26 +56,6 @@ const SignUp = () => {
       console.error("Registration Error:", err.response?.data);
     }
   };
-
-  const handleAvatarChange = (event) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
-      form.setValue("avatar", file);
-    } else {
-      setAvatarPreview(null);
-      form.setValue("avatar", undefined);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (avatarPreview) {
-        URL.revokeObjectURL(avatarPreview);
-      }
-    };
-  }, [avatarPreview]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -132,48 +102,14 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
-            <div className="flex gap-2">
-              <FormField
-                control={form.control}
-                name="countryCode"
-                render={({ field }) => (
-                  <FormItem className="w-24">
-                    <FormLabel>Code</FormLabel>
-                    <FormControl>
-                      <select
-                        {...field}
-                        className="h-10 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        <option value="+91">+91</option>
-                        <option value="+1">+1</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem className="flex-grow">
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Phone number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
             <FormField
               control={form.control}
-              name="address"
+              name="employeeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>Employee ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Address" {...field} />
+                    <Input placeholder="Employee ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,29 +117,18 @@ const SignUp = () => {
             />
             <FormField
               control={form.control}
-              name="avatar"
+              name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Avatar</FormLabel>
+                  <FormLabel>Role</FormLabel>
                   <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      ref={field.ref}
-                      name={field.name}
-                      onBlur={field.onBlur}
-                      onChange={handleAvatarChange}
-                    />
+                    <select {...field} className="input">
+                      <option value="">Select role</option>
+                      <option value="employee">Employee</option>
+                      <option value="manager">Manager</option>
+                      <option value="admin">Admin</option>
+                    </select>
                   </FormControl>
-                  {avatarPreview && (
-                    <div className="mt-2">
-                      <img
-                        src={avatarPreview}
-                        alt="Avatar Preview"
-                        className="h-20 w-20 rounded-full object-cover"
-                      />
-                    </div>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
