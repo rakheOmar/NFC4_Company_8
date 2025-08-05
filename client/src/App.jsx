@@ -2,7 +2,12 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 
-// Utility Functions
+// PAGES
+import Login from "@/pages/Login";
+import SignUp from "@/pages/SignUp";
+import Home from "@/pages/Home";
+import SimulationDashboard from "@/pages/SimulationDashboard";
+
 function pcmToWav(pcmData, sampleRate) {
   const numChannels = 1;
   const bytesPerSample = 2;
@@ -125,14 +130,7 @@ function App() {
           {/* Authentication Pages (Layout hidden) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-
-          {/* Legal & Information Pages */}
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/support" element={<Support />} />
-
-          <Route path="/survey" element={<SurveyPage />} />
-          <Route path="/careers" element={<Careers />} />
+          <Route path="/sim" element={<SimulationDashboard />} />
         </Routes>
       </Layout>
     </Router>

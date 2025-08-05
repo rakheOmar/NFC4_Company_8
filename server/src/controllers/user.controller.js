@@ -27,8 +27,9 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, password, employeeId, role } = req.body;
 
+  // FIX 1: Removed 'site' from this validation array
   if (
-    [fullname, email, password, employeeId, site].some(
+    [fullname, email, password, employeeId, role].some(
       (field) => !field || (typeof field === "string" && field.trim() === "")
     )
   ) {
@@ -57,8 +58,8 @@ const registerUser = asyncHandler(async (req, res) => {
     email: email.toLowerCase(),
     password,
     employeeId,
-    role: role || "Worker", // Default to 'Worker' if not provided
-    site,
+    role: role || "Worker",
+    // FIX 2: Removed 'site' from the user creation object
     avatar: avatar?.url || "",
   });
 

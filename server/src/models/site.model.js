@@ -15,7 +15,7 @@ const siteSchema = new Schema(
         required: true,
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
+        type: [Number],
         required: true,
       },
     },
@@ -29,8 +29,8 @@ const siteSchema = new Schema(
     },
     workers: {
       type: Schema.Types.ObjectId,
-      ref: "User"
-    }
+      ref: "User",
+    },
   },
   { timestamps: true }
 );
