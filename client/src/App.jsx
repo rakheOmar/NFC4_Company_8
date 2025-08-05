@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import SosChatButton from "@/components/SosChatButton";
 
 import Navbar from "@/components/blocks/Navbar/Navbar";
 import Footer from "@/components/Footer";
@@ -14,13 +15,14 @@ import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import SurveyPage from "@/pages/SurveyPage";
-import ThankYou from "@/pages/ThankYou";  
+import ThankYou from "@/pages/ThankYou";
 import SentimentSummary from "@/components/SentimentSummary";
 
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import Support from "@/pages/Support";
 import SimulationDashboard from "@/pages/SimulationDashboard";
+import LogExplorer from "@/pages/LogExplorer";
 
 // Audio utilities (unchanged)
 function pcmToWav(pcmData, sampleRate) {
@@ -99,7 +101,7 @@ const Layout = ({ children }) => {
       {!hideLayout && <Navbar />}
       <main className="flex-1">{children}</main>
       {!hideLayout && <Footer />}
-      {!hideLayout && <ChatBotButton />}
+      {!hideLayout && <SosChatButton />}
     </div>
   );
 };
@@ -123,6 +125,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/log-verify" element={<LogExplorer />} />
         </Routes>
       </Layout>
     </Router>

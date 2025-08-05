@@ -1,38 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header.jsx";
 import "../App.css";
 import InfoCard from "./InfoCard.jsx";
 import WorkInstructions from "./WorkInstructions.jsx";
 import SalaryAttendance from "./SalaryAttendance.jsx";
-import VideoCommunication from "@/components/VideoComponent.jsx";
-import EnvironmentalStatus from "./EnvironmentalStatus.jsx";
 import Sidebar from "./Sidebar.jsx";
-// Import Icons
+import socket from "../socket.js";
 import { FaRegClock, FaShieldAlt, FaUsers, FaExclamationTriangle } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
 
 const Dashboard = () => {
-  // Dummy data - In a real app, this would come from your server API
-  const user = {
-    name: "John Doe",
-    id: "MIN-2024-001",
-    level: "Level 3 Certified",
-  };
+  const { user } = useAuth();
 
-  const environmentalData = {
-    temperature: "24°C",
-    airQuality: "Good",
-    gasLevels: "Normal",
-    location: "Tunnel B-7",
-  };
+  const [isCheckedIn, setIsCheckedIn] = useState(
+    () => localStorage.getItem(`isCheckedIn_${user?._id}`) === "true"
+  );
 
-  const salaryData = {
-    thisMonth: 45000,
-    attendance: "22/24",
-    progress: 92,
-    base: 40000,
-    safetyBonus: 3000,
-    overtime: 2000,
-  };
+  const [team, setTeam] = useState(
+    () => JSON.parse(localStorage.getItem("teamData")) || { online: 8, offline: 4 }
+  );
+
+  const [salaryData, setSalaryData] = useState(
+    () =>
+      JSON.parse(localStorage.getItem(`salaryData_${user?._id}`)) || {
+        thisMonth: 45500,
+        attendance: "23/24",
+        progress: 96,
+        base: 40000,
+        safetyBonus: 3000,
+        overtime: 2500,
+      }
+  );
 
   const instructions = [
     { id: 1, title: "Safety equipment check", status: "completed", detail: "Completed at 6:15 AM" },
@@ -45,24 +43,107 @@ const Dashboard = () => {
     { id: 3, title: "Equipment maintenance", status: "scheduled", detail: "Scheduled for 2:00 PM" },
   ];
 
+  const handleCheckIn = () => {
+    if (!isCheckedIn && user?._id) {
+      socket.emit("workerCheckIn", { workerId: user._id });
+      setIsCheckedIn(true);
+      localStorage.setItem(`isCheckedIn_${user?._id}`, "true");
+    }
+  };
+
+  const handleCheckOut = () => {
+    if (isCheckedIn && user?._id) {
+      socket.emit("workerCheckOut", { workerId: user._id });
+      setIsCheckedIn(false);
+      localStorage.setItem(`isCheckedIn_${user?._id}`, "false");
+    }
+  };
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const handleWorkerCheckInUpdate = (data) => {
+      setTeam((prevTeam) => {
+        const newTeam = {
+          online: prevTeam.online + 1,
+          offline: Math.max(0, prevTeam.offline - 1),
+        };
+        localStorage.setItem("teamData", JSON.stringify(newTeam));
+        return newTeam;
+      });
+
+      if (data.workerId === user._id) {
+        setSalaryData((prevSalary) => {
+          const [attended, total] = prevSalary.attendance.split("/").map(Number);
+          const newAttended = attended + 1;
+          const newSalary = {
+            ...prevSalary,
+            attendance: `${newAttended}/${total}`,
+            thisMonth: prevSalary.thisMonth + 500,
+            progress: Math.round((newAttended / total) * 100),
+          };
+          localStorage.setItem(`salaryData_${user._id}`, JSON.stringify(newSalary));
+          return newSalary;
+        });
+      }
+    };
+
+    const handleWorkerCheckOutUpdate = (data) => {
+      setTeam((prevTeam) => {
+        const newTeam = {
+          online: Math.max(0, prevTeam.online - 1),
+          offline: prevTeam.offline + 1,
+        };
+        localStorage.setItem("teamData", JSON.stringify(newTeam));
+        return newTeam;
+      });
+    };
+
+    socket.on("workerCheckInUpdate", handleWorkerCheckInUpdate);
+    socket.on("workerCheckOutUpdate", handleWorkerCheckOutUpdate);
+
+    return () => {
+      socket.off("workerCheckInUpdate", handleWorkerCheckInUpdate);
+      socket.off("workerCheckOutUpdate", handleWorkerCheckOutUpdate);
+    };
+  }, [user?._id]);
+
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container relative">
       <Sidebar user={user} />
-      <div className="main-content">
+      <div className="main-content lg:ml-64 p-4">
         <Header />
         <div className="dashboard-grid">
           <InfoCard
             icon={<FaRegClock />}
             title="Shift Status"
-            value="Inactive"
-            subtext="Not checked in"
-          />
+            value={isCheckedIn ? "Active" : "Inactive"}
+            subtext={isCheckedIn ? "Checked in" : "Not checked in"}
+          >
+            {!isCheckedIn && (
+              <button
+                onClick={handleCheckIn}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow mt-2"
+              >
+                Check In
+              </button>
+            )}
+            {isCheckedIn && (
+              <button
+                onClick={handleCheckOut}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow mt-2"
+              >
+                Check Out
+              </button>
+            )}
+          </InfoCard>
+
           <InfoCard icon={<FaShieldAlt />} title="Safety Score" value="98%" progress={98} />
           <InfoCard
             icon={<FaUsers />}
             title="Team Members"
-            value="12"
-            subtext="8 online, 4 offline"
+            value={team.online + team.offline}
+            subtext={`${team.online} online, ${team.offline} offline`}
           />
           <InfoCard
             icon={<FaExclamationTriangle />}
@@ -71,10 +152,9 @@ const Dashboard = () => {
             subtext="2 new, 1 pending"
             alert={true}
           />
+
           <WorkInstructions instructions={instructions} />
           <SalaryAttendance data={salaryData} />
-          <VideoCommunication />
-          <EnvironmentalStatus data={environmentalData} />
         </div>
       </div>
     </div>

@@ -4,7 +4,6 @@ import { useAuth } from "@/context/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
-import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
 import { LogOut, Settings, LayoutDashboard } from "lucide-react";
 import { ModeToggle } from "@/components/ThemeToggle";
@@ -38,7 +37,7 @@ const Navbar = () => {
         <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
-            <NavMenu className="hidden md:block" />
+            {/* The navigation menu (NavMenu) is removed */}
           </div>
           <div className="flex items-center gap-3">
             {user ? (
@@ -46,9 +45,7 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-muted-foreground/20">
                     <AvatarImage src={user.avatar} alt={user.fullname} />
-                    <AvatarFallback>
-                      {user.fullname?.charAt(0).toUpperCase() || "U"}
-                    </AvatarFallback>
+                    <AvatarFallback>{user.fullname?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent

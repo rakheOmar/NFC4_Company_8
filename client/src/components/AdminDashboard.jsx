@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminInfoCard from "./AdminInfo";
 import WorkerManagement from "./WorkerManagement";
 import MinesDashboard from "./MinesDashboard";
 import LocationsDashboard from "./LocationsDashboard";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import { FaUsers, FaChartLine, FaMapMarkedAlt, FaShieldAlt } from "react-icons/fa";
+import axios from "@/lib/axios";
 
 const Header = ({ dashboardType }) => {
   return (
@@ -17,6 +18,34 @@ const Header = ({ dashboardType }) => {
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("Workers");
+  const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState({
+    totalAdmins: 0,
+    totalSupervisors: 0,
+    totalWorkers: 0,
+    totalMachines: 0,
+    machinesUnderMaintenance: 0,
+    machinesOffline: 0,
+    maintenancePercentage: 0,
+  });
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/admin/overview"); // ✅ Matches your backend route
+      setDashboardData(res.data);
+    } catch (err) {
+      console.error("Failed to fetch admin dashboard data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 30000); // Refresh every 30 sec
+    return () => clearInterval(interval);
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -41,25 +70,36 @@ const AdminDashboard = () => {
         <Header dashboardType="Admin" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 my-6">
-          <AdminInfoCard
-            title="Total Workers"
-            value="74"
-            trend="+5 from last week"
-            icon={<FaUsers />}
-          />
-          <AdminInfoCard
-            title="Active Now"
-            value="3"
-            subtext="60% of total workforce"
-            icon={<FaChartLine />}
-          />
-          <AdminInfoCard
-            title="Active Mines"
-            value="3"
-            subtext="All operational"
-            icon={<FaMapMarkedAlt />}
-          />
-          <AdminInfoCard title="Safety Score" value="96%" progress={96} icon={<FaShieldAlt />} />
+          {loading ? (
+            <div className="col-span-4 text-center py-4">Loading dashboard data...</div>
+          ) : (
+            <>
+              <AdminInfoCard
+                title="Total Admins"
+                value={dashboardData.totalAdmins}
+                trend="+1 from last week"
+                icon={<FaUsers />}
+              />
+              <AdminInfoCard
+                title="Total Supervisors"
+                value={dashboardData.totalSupervisors}
+                subtext="Managing all operations"
+                icon={<FaChartLine />}
+              />
+              <AdminInfoCard
+                title="Total Workers"
+                value={dashboardData.totalWorkers}
+                subtext="All workforce"
+                icon={<FaUsers />}
+              />
+              <AdminInfoCard
+                title="Machines Offline"
+                value={dashboardData.machinesOffline}
+                subtext={`Maintenance: ${dashboardData.maintenancePercentage}%`}
+                icon={<FaShieldAlt />}
+              />
+            </>
+          )}
         </div>
 
         <nav className="border-b border-gray-200">

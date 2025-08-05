@@ -19,11 +19,13 @@ export const getSite = asyncHandler(async (req, res) => {
     },
     {
       path: "workers",
-      select: "fullname email role isOnline",
+      // FIX: Added currentLocation and ppeStatus for the simulation
+      select: "fullname email role isOnline currentLocation ppeStatus",
     },
     {
       path: "equipments",
-      select: "name type status fuelType",
+      // FIX: Added fields needed for CO2 calculation and location
+      select: "name type status fuelType runtimeHours consumptionRate currentLocation",
     },
     {
       path: "sensors",

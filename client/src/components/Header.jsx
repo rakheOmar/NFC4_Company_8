@@ -35,19 +35,6 @@ const Header = ({ dashboardType = "Worker" }) => {
           <span>{formattedTime}</span>
           <span>{formattedDate}</span>
         </div>
-
-        {/* Conditionally render the Admin Panel link */}
-        {dashboardType === "Worker" && (
-          <Link to="/admin" className="admin-panel-link">
-            <FaUserShield /> Admin Panel
-          </Link>
-        )}
-
-        <div className="header-icons">
-          <FaRegBell className="icon" />
-          <FaCog className="icon" />
-          <FaExpand className="icon" />
-        </div>
       </div>
     </header>
   );

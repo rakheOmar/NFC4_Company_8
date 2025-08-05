@@ -1,6 +1,6 @@
 import React from "react";
 
-const InfoCard = ({ icon, title, value, subtext, progress, alert }) => {
+const InfoCard = ({ icon, title, value, subtext, progress, alert, children }) => {
   const progressColor = alert ? "var(--red-color)" : "var(--primary-color)";
   const iconColor = alert ? "var(--red-color)" : "var(--blue-color)";
 
@@ -19,10 +19,12 @@ const InfoCard = ({ icon, title, value, subtext, progress, alert }) => {
           <div className="progress-bar-container">
             <div
               className="progress-bar"
-              style={{ width: `${progress}%`, backgroundColor: "var(--primary-color)" }}
+              style={{ width: `${progress}%`, backgroundColor: progressColor }}
             ></div>
           </div>
         )}
+        {/* Extra content (like button) */}
+        {children && <div className="mt-3">{children}</div>}
       </div>
     </div>
   );
