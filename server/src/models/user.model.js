@@ -2,57 +2,37 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+const pointSchema = new Schema(
+  {
+    type: { type: String, enum: ["Point"], required: true },
+    coordinates: { type: [Number], required: true },
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema(
   {
-    fullname: {
-      type: String,
-      required: true,
-      trim: true,
-      index: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    countryCode: {
-      type: String,
-      required: true,
-      default: "+91",
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    address: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    avatar: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-    },
+    fullname: { type: String, required: true, trim: true, index: true },
+    employeeId: { type: String, required: true, unique: true, trim: true, index: true },
+    email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    avatar: { type: String },
+    password: { type: String, required: [true, "Password is required"] },
     role: {
       type: String,
-      enum: ["user", "worker","admin"],
-      default: "user",
+      enum: ["Worker", "Admin"],
+      default: "Worker",
       required: true,
     },
-    refreshToken: {
-      type: String,
+    refreshToken: { type: String },
+    currentLocation: { type: pointSchema, index: "2dsphere" },
+    ppeStatus: {
+      helmet: { type: Boolean, default: false },
+      vest: { type: Boolean, default: false },
+      mask: { type: Boolean, default: false },
     },
+    isOnline: { type: Boolean, default: false },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {
@@ -71,30 +51,19 @@ userSchema.methods.generateAuthToken = function () {
     {
       _id: this._id,
       email: this.email,
-      fullName: this.fullName,
-      phoneNumber: this.phoneNumber,
-      address: this.address,
-      avatar: this.avatar,
       role: this.role,
-      countryCode: this.countryCode,
+      employeeId: this.employeeId,
+      site: this.site,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
   );
 };
 
 userSchema.methods.generateRefreshToken = function () {
-  return jwt.sign(
-    {
-      _id: this._id,
-    },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    }
-  );
+  return jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+  });
 };
 
 export const User = mongoose.model("User", userSchema);

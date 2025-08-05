@@ -6,27 +6,39 @@ import {
   refreshAccessToken,
   changeCurrentPassword,
   getCurrentUser,
-  updateCurrentUser,
+  updateAccountDetails,
   updateUserAvatar,
   getUserProfile,
 } from "../controllers/user.controller.js";
-
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-// Public Routes
-router.post("/register", upload.single("avatar"), registerUser);
-router.post("/login", loginUser);
-router.post("/refresh-token", refreshAccessToken);
+router.route("/register").post(
+    upload.single("avatar"),
+    registerUser
+);
 
-// Authenticated Routes
-router.post("/logout", verifyJWT, logoutUser);
-router.post("/change-password", verifyJWT, changeCurrentPassword);
-router.get("/me", verifyJWT, getCurrentUser);
-router.patch("/me", verifyJWT, updateCurrentUser);
-router.patch("/me/avatar", verifyJWT, upload.single("avatar"), updateUserAvatar);
-router.get("/profile/:email", getUserProfile);
+router.route("/login").post(loginUser);
+
+router.route("/refresh-token").post(refreshAccessToken);
+
+router.use(verifyJWT);
+
+router.route("/logout").post(logoutUser);
+
+router.route("/change-password").post(changeCurrentPassword);
+
+router.route("/me").get(getCurrentUser);
+
+router.route("/update-account").patch(updateAccountDetails);
+
+router.route("/avatar").patch(
+    upload.single("avatar"),
+    updateUserAvatar
+);
+
+router.route("/profile/:employeeId").get(getUserProfile);
 
 export default router;
