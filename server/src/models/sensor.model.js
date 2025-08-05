@@ -8,7 +8,7 @@ const sensorSchema = new Schema(
       required: true,
       enum: ["AirQuality", "GasLeak", "Temperature", "Vibration"],
     },
-    site: { type: Schema.Types.ObjectId, ref: "Site", required: true },
+    site: { type: Schema.Types.ObjectId, ref: "Site" },
     locationDescription: { type: String }, // e.g., "Shaft 3, Level 2"
     status: { type: String, enum: ["Active", "Inactive", "Error"], default: "Active" },
   },

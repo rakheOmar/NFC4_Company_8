@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.model.js";
+import { Site } from "../models/site.model.js"; // Required for login logic
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
@@ -12,7 +13,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
       throw new ApiError(404, "User not found while generating tokens");
     }
 
-    const accessToken = user.generateAuthToken();
+    const accessToken = user.generateAuthToken(); // This was fixed in user.model.js
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
@@ -27,13 +28,12 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, password, employeeId, role } = req.body;
 
-  // FIX 1: Removed 'site' from this validation array
   if (
-    [fullname, email, password, employeeId, role].some(
-      (field) => !field || (typeof field === "string" && field.trim() === "")
+    [fullname, email, password, employeeId].some(
+      (f) => !f || (typeof f === "string" && f.trim() === "")
     )
   ) {
-    throw new ApiError(400, "Please fill all the required fields");
+    throw new ApiError(400, "Please fill all required fields");
   }
 
   const existingUser = await User.findOne({
@@ -53,13 +53,13 @@ const registerUser = asyncHandler(async (req, res) => {
     }
   }
 
+  // User is created without a site link, as requested
   const user = await User.create({
     fullname,
     email: email.toLowerCase(),
     password,
     employeeId,
     role: role || "Worker",
-    // FIX 2: Removed 'site' from the user creation object
     avatar: avatar?.url || "",
   });
 
@@ -79,9 +79,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Please provide an email or employee ID, and a password.");
   }
 
-  const user = await User.findOne({
-    $or: [{ email: email?.toLowerCase() }, { employeeId }],
-  });
+  const user = await User.findOne({ $or: [{ email: email?.toLowerCase() }, { employeeId }] });
 
   if (!user) {
     throw new ApiError(404, "User not found with the provided credentials.");
@@ -94,13 +92,12 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-
   const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  };
+  // Find the user's site by searching for them in the workers array of all sites
+  const assignedSite = await Site.findOne({ workers: user._id }).select("_id name location");
+
+  const options = { httpOnly: true, secure: process.env.NODE_ENV === "production" };
 
   return res
     .status(200)
@@ -109,6 +106,7 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(200, "User logged in successfully", {
         user: loggedInUser,
+        site: assignedSite, // Add the found site to the login response
         accessToken,
       })
     );
@@ -116,11 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(req.user._id, { $set: { refreshToken: undefined } }, { new: true });
-
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  };
+  const options = { httpOnly: true, secure: process.env.NODE_ENV === "production" };
 
   return res
     .status(200)
@@ -250,6 +244,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, "User profile fetched successfully", user));
 });
 
+const getAllUsers = asyncHandler(async (req, res) => {
+  // Find all users and exclude their password and refresh token from the response
+  const users = await User.find().select("-password -refreshToken");
+
+  return res.status(200).json(new ApiResponse(200, "All users fetched successfully", users));
+});
+
 export {
   registerUser,
   loginUser,
@@ -260,4 +261,5 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   getUserProfile,
+  getAllUsers,
 };

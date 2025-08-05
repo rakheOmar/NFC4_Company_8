@@ -46,6 +46,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+// ... inside userSchema.methods
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign(
     {
@@ -53,7 +54,7 @@ userSchema.methods.generateAuthToken = function () {
       email: this.email,
       role: this.role,
       employeeId: this.employeeId,
-      site: this.site,
+      // site: this.site, // <-- CRITICAL FIX: REMOVE THIS LINE
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }

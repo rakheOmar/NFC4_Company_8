@@ -2,23 +2,33 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 
-// PAGES
+import Navbar from "@/components/blocks/Navbar/Navbar";
+import Footer from "@/components/Footer";
+import ChatBotButton from "@/components/ChatBotButton";
+
+import WorkerDashboard from "@/components/Dashboard";
+import AdminDashboard from "@/components/AdminDashboard";
+import MineOpsDashboard from "@/pages/MineOpsDashboard";
+import Careers from "./pages/Careers";
+import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
-import Home from "@/pages/Home";
+import SurveyPage from "@/pages/SurveyPage";
+
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
+import Support from "@/pages/Support";
 import SimulationDashboard from "@/pages/SimulationDashboard";
 
 function pcmToWav(pcmData, sampleRate) {
   const numChannels = 1;
   const bytesPerSample = 2;
-
   const wavHeader = new ArrayBuffer(44);
   const view = new DataView(wavHeader);
 
   writeString(view, 0, "RIFF");
   view.setUint32(4, 36 + pcmData.byteLength, true);
   writeString(view, 8, "WAVE");
-
   writeString(view, 12, "fmt ");
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true);
@@ -27,7 +37,6 @@ function pcmToWav(pcmData, sampleRate) {
   view.setUint32(28, sampleRate * numChannels * bytesPerSample, true);
   view.setUint16(32, numChannels * bytesPerSample, true);
   view.setUint16(34, bytesPerSample * 8, true);
-
   writeString(view, 36, "data");
   view.setUint32(40, pcmData.byteLength, true);
 
@@ -75,28 +84,6 @@ const callApiWithBackoff = async (apiCall, maxRetries = 5, delay = 1000) => {
   }
 };
 
-// Components & Pages
-import Navbar from "@/components/blocks/Navbar/Navbar";
-import Footer from "@/components/Footer";
-import ChatBotButton from "@/components/ChatBotButton";
-
-// Dashboards
-import WorkerDashboard from "@/components/Dashboard";
-import AdminDashboard from "@/components/AdminDashboard";
-import MineOpsDashboard from "@/pages/MineOpsDashboard";
-import Careers from "./pages/Careers";
-// Main Pages
-import Home from "@/pages/Home";
-import Login from "@/pages/Login";
-import SignUp from "@/pages/SignUp";
-import SurveyPage from "@/pages/SurveyPage";
-
-// Legal / Info Pages
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import TermsOfService from "@/pages/TermsOfService";
-// import Careers from "@/pages/Careers";
-import Support from "@/pages/Support";
-
 const hiddenLayoutRoutes = ["/login", "/signup"];
 
 const Layout = ({ children }) => {
@@ -119,18 +106,18 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          {/* Main Landing Page */}
           <Route path="/" element={<Home />} />
-
-          {/* Dashboards */}
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/mine-dashboard" element={<MineOpsDashboard />} />
-
-          {/* Authentication Pages (Layout hidden) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/sim" element={<SimulationDashboard />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/support" element={<Support />} />
         </Routes>
       </Layout>
     </Router>

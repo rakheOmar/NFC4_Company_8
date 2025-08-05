@@ -13,7 +13,7 @@ const equipmentSchema = new Schema(
       required: true,
       enum: ["Excavator", "Dumper", "Drill", "ConveyorBelt", "VentilationFan"],
     },
-    site: { type: Schema.Types.ObjectId, ref: "Site", required: true },
+    site: { type: Schema.Types.ObjectId, ref: "Site" },
     status: {
       type: String,
       required: true,

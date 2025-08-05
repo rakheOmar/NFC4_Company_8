@@ -40,6 +40,9 @@ import healthcheckRouter from "./routes/healthcheck.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
 import agoraRouter from "./routes/agora.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import siteRoutes from "./routes/site.routes.js";
+import equipmentRoutes from "./routes/equipment.routes.js";
+import sensorRoutes from "./routes/sensor.routes.js";
 
 // --- Routes Declaration ---
 app.use("/api/v1/users", userRouter);
@@ -47,6 +50,11 @@ app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/agora", agoraRouter);
 app.use("/api/v1/chat", chatRoutes);
+
+// --- FIX: Added /v1 to the paths below for consistency ---
+app.use("/api/v1/sites", siteRoutes);
+app.use("/api/v1/equipment", equipmentRoutes);
+app.use("/api/v1/sensors", sensorRoutes);
 
 io.on("connection", (socket) => {
   console.log(`Socket.IO client connected: ${socket.id}`);
