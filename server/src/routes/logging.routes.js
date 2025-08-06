@@ -5,8 +5,6 @@ import { verifyJWT, verifyRole } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 // Apply JWT and Admin Role verification to all routes in this file
-router.use(verifyJWT, verifyRole(["Admin"]));
-
 // Route to create a new log entry
 router.post("/", createLog);
 

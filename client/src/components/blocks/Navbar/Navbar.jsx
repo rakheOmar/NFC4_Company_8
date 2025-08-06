@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { NavigationSheet } from "./navigation-sheet";
 import { LogOut, Settings, LayoutDashboard } from "lucide-react";
-import { ModeToggle } from "@/components/ThemeToggle";
 
 import {
   DropdownMenu,
@@ -39,6 +38,18 @@ const Navbar = () => {
             {/* The Logo is now clickable and navigates to the home page */}
             <div onClick={() => navigate("/")} className="cursor-pointer">
               <Logo />
+            </div>
+            {/* --- NEW: Navigation Links --- */}
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" onClick={() => navigate("/rnd")}>
+                R&D
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/log-verify")}>
+                Verify Log
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/support")}>
+                Support
+              </Button>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -84,7 +95,6 @@ const Navbar = () => {
                 <Button onClick={() => navigate("/signup")}>Sign Up</Button>
               </>
             )}
-            <ModeToggle />
             <div className="md:hidden">
               <NavigationSheet />
             </div>

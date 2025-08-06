@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "@/lib/axios"; // Assuming axios is configured for your API
 import {
   FaProjectDiagram,
   FaBalanceScale,
@@ -7,6 +8,7 @@ import {
   FaLeaf,
   FaClock,
   FaChartPie,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import {
   BarChart,
@@ -21,20 +23,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Function to generate random data for productionData
+// Data generation functions remain the same
 const generateRandomProductionData = () => {
   const getRandomValue = (min, max) => parseFloat((Math.random() * (max - min) + min).toFixed(2));
-
   const cilProduction = getRandomValue(100, 150);
   const cilOfftake = getRandomValue(120, 160);
   const scclProduction = getRandomValue(10, 15);
   const scclOfftake = getRandomValue(10, 15);
   const captiveProduction = getRandomValue(25, 40);
   const captiveOfftake = getRandomValue(30, 45);
-
   const totalProduction = cilProduction + scclProduction + captiveProduction;
   const totalOfftake = cilOfftake + scclOfftake + captiveOfftake;
-
   return [
     {
       name: "CIL",
@@ -66,11 +65,8 @@ const generateRandomProductionData = () => {
     },
   ];
 };
-
-// Function to generate random data for importData
 const generateRandomImportData = () => {
   const getRandomValue = (min, max) => parseFloat((Math.random() * (max - min) + min).toFixed(2));
-
   return [
     {
       name: "2020-21",
@@ -111,20 +107,17 @@ const generateRandomImportData = () => {
   ];
 };
 
-// Initialize data with random values on component load
 const initialProductionData = generateRandomProductionData();
 const initialImportData = generateRandomImportData();
 
-// --- Feature Card Component ---
 const FeatureCard = ({ icon, title, description }) => (
-  <div className="bg-white p-6 rounded-lg border border-gray-200">
-    <div className="text-primary text-2xl mb-3">{icon}</div>
+  <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="text-orange-500 text-3xl mb-3">{icon}</div>
     <h3 className="font-bold text-lg text-gray-800 mb-1">{title}</h3>
     <p className="text-gray-600 text-sm">{description}</p>
   </div>
 );
 
-// --- Project Item Component ---
 const ProjectItem = ({ id, status, title, budget, lead, progress, duration }) => {
   const statusClass =
     status === "In Progress" ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-800";
@@ -151,15 +144,55 @@ const ProjectItem = ({ id, status, title, budget, lead, progress, duration }) =>
       </div>
       <div className="mt-3">
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div className="bg-primary h-2 rounded-full" style={{ width: `${progress}%` }}></div>
+          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
     </div>
   );
 };
 
-// --- Main R&D Page Component ---
 const RandDPage = () => {
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchLogs = async () => {
+      if (logs.length === 0) {
+        setLogsLoading(true);
+      }
+      setError(null);
+
+      try {
+        // --- MODIFIED: Using the full localhost URL as requested ---
+        const response = await axios.get("http://localhost:8000/api/v1/logs/", {
+          signal: controller.signal,
+        });
+        setLogs(response.data.data);
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+          return;
+        }
+        console.error("Failed to fetch logs:", error);
+        setError("Could not retrieve log data. Please try again later.");
+      } finally {
+        setLogsLoading(false);
+      }
+    };
+
+    fetchLogs();
+
+    const intervalId = setInterval(fetchLogs, 15000);
+
+    return () => {
+      controller.abort();
+      clearInterval(intervalId);
+    };
+  }, []);
+
   const features = [
     {
       icon: <FaProjectDiagram />,
@@ -223,7 +256,6 @@ const RandDPage = () => {
     },
   ];
 
-  // Function to save data to sessionStorage before navigating
   const handleTipsClick = () => {
     sessionStorage.setItem("productionData", JSON.stringify(initialProductionData));
     sessionStorage.setItem("importData", JSON.stringify(initialImportData));
@@ -231,30 +263,20 @@ const RandDPage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans">
-      <style>
-        {`
-                .recharts-default-tooltip {
-                    border-radius: 8px !important;
-                    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-                }
-                .data-table th, .data-table td {
-                    text-align: left;
-                    padding: 8px;
-                    border-bottom: 1px solid #e5e7eb;
-                }
-                .data-table tr:last-child td {
-                    font-weight: bold;
-                }
-                `}
-      </style>
-
-      {/* The <header> element has been removed from here to prevent the duplicate navbar */}
+      <style>{`
+        .recharts-default-tooltip { border-radius: 8px !important; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .data-table th, .data-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
+        .data-table tr:last-child td { font-weight: bold; }
+        .log-hash-list::-webkit-scrollbar { width: 4px; }
+        .log-hash-list::-webkit-scrollbar-track { background: #f1f5f9; }
+        .log-hash-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+        .log-hash-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      `}</style>
 
       <main className="max-w-7xl mx-auto py-12 px-8">
-        {/* Hero Section */}
         <section className="text-center">
           <h1 className="text-5xl font-bold text-gray-800">Transforming Coal Mining</h1>
-          <h2 className="text-5xl font-bold text-blue-600">Through Innovation</h2>
+          <h2 className="text-5xl font-bold text-orange-500">Through Innovation</h2>
           <p className="max-w-3xl mx-auto text-gray-600 mt-4">
             Digital management platform for R&D and S&T projects in coal mining. Track project
             lifecycles, monitor budgets, ensure safety compliance, and drive sustainable innovation.
@@ -279,62 +301,21 @@ const RandDPage = () => {
           </div>
         </section>
 
-        {/* Charts Section */}
-        <section className="mt-16 space-y-8">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <section className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-xl font-bold text-gray-800">
                 Coal Production & Offtake (August 2025, in MT)
               </h3>
-              <a
-                href="/rnd-tips"
+              <Link
+                to="/rnd-tips"
                 onClick={handleTipsClick}
-                className="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                className="bg-orange-500 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors"
               >
                 R&D Management Tips →
-              </a>
+              </Link>
             </div>
             <p className="text-sm text-gray-500 mb-4">Source: DDG Office, Ministry of Coal</p>
-            <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm text-left text-gray-500 data-table">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  <tr>
-                    <th className="py-3 px-6">Company</th>
-                    <th className="py-3 px-6">
-                      Production*
-                      <br />
-                      Target
-                    </th>
-                    <th className="py-3 px-6">
-                      Production*
-                      <br />
-                      Ach. (Prov)
-                    </th>
-                    <th className="py-3 px-6">
-                      Offtake/Dispatch*
-                      <br />
-                      Target
-                    </th>
-                    <th className="py-3 px-6">
-                      Offtake/Dispatch*
-                      <br />
-                      Ach. (Prov.)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {initialProductionData.map((row, index) => (
-                    <tr key={index} className="bg-white border-b">
-                      <td className="py-4 px-6">{row.name}</td>
-                      <td className="py-4 px-6">{row.targetProduction.toFixed(2)}</td>
-                      <td className="py-4 px-6">{row.production}</td>
-                      <td className="py-4 px-6">{row.targetOfftake.toFixed(2)}</td>
-                      <td className="py-4 px-6">{row.offtake}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={initialProductionData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -342,57 +323,64 @@ const RandDPage = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="production" fill="#3b82f6" name="Production" />
-                <Bar dataKey="offtake" fill="#10b981" name="Offtake/Dispatch" />
+                <Bar dataKey="production" fill="#f97316" name="Production" />
+                <Bar dataKey="offtake" fill="#4b5563" name="Offtake/Dispatch" />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
+          <div className="lg:col-span-1 bg-white p-6 rounded-lg border border-gray-200 flex flex-col">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Immutable Log Records</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Transaction hashes anchored on-chain for data integrity.
+            </p>
+            <div className="flex-grow overflow-hidden">
+              {logsLoading && logs.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Loading Logs...
+                </div>
+              ) : error ? (
+                <div className="flex items-center justify-center h-full text-red-600 text-center px-4">
+                  {error}
+                </div>
+              ) : (
+                <ul className="space-y-2 h-full overflow-y-auto pr-2 log-hash-list">
+                  {logs.filter((log) => log.blockchainTxHash).length > 0 ? (
+                    logs
+                      .filter((log) => log.blockchainTxHash)
+                      .map((log) => (
+                        <li
+                          key={log._id}
+                          className="p-2 bg-gray-50 rounded-md border border-gray-200"
+                        >
+                          <a
+                            href={`https://sepolia.etherscan.io/tx/${log.blockchainTxHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between text-xs text-gray-600 hover:text-orange-600 font-mono"
+                          >
+                            <span>{`${log.blockchainTxHash.substring(0, 10)}...${log.blockchainTxHash.substring(log.blockchainTxHash.length - 10)}`}</span>
+                            <FaExternalLinkAlt className="ml-2 flex-shrink-0" />
+                          </a>
+                        </li>
+                      ))
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-500">
+                      No on-chain logs found.
+                    </div>
+                  )}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-8 space-y-8">
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="text-xl font-bold text-gray-800 mb-2">
               Coal & Coke Import (Million Tonnes)
             </h3>
             <p className="text-sm text-gray-500 mb-4">Source: DDG Office, Ministry of Coal</p>
-            <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm text-left text-gray-500 data-table">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  <tr>
-                    <th className="py-3 px-6">Coal</th>
-                    {initialImportData.map((row, index) => (
-                      <th key={index} className="py-3 px-6">
-                        {row.name.replace("*", "")}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white border-b">
-                    <td className="py-4 px-6">Coking Coal</td>
-                    {initialImportData.map((row, index) => (
-                      <td key={index} className="py-4 px-6">
-                        {row.coking}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="py-4 px-6">Non-Coking Coal</td>
-                    {initialImportData.map((row, index) => (
-                      <td key={index} className="py-4 px-6">
-                        {row.nonCoking}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-white border-b font-bold">
-                    <td className="py-4 px-6">Total Coal Import</td>
-                    {initialImportData.map((row, index) => (
-                      <td key={index} className="py-4 px-6">
-                        {row.total}
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={initialImportData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -403,21 +391,21 @@ const RandDPage = () => {
                 <Line
                   type="monotone"
                   dataKey="coking"
-                  stroke="#ef4444"
+                  stroke="#f97316"
                   activeDot={{ r: 8 }}
                   name="Coking Coal"
                 />
                 <Line
                   type="monotone"
                   dataKey="nonCoking"
-                  stroke="#22c55e"
+                  stroke="#4b5563"
                   activeDot={{ r: 8 }}
                   name="Non-Coking Coal"
                 />
                 <Line
                   type="monotone"
                   dataKey="total"
-                  stroke="#3b82f6"
+                  stroke="#1e293b"
                   activeDot={{ r: 8 }}
                   name="Total Import"
                 />
@@ -426,14 +414,12 @@ const RandDPage = () => {
           </div>
         </section>
 
-        {/* Features Section */}
         <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
           {features.map((feature) => (
             <FeatureCard key={feature.title} {...feature} />
           ))}
         </section>
 
-        {/* Recent Projects Section */}
         <section className="bg-white p-6 rounded-lg border border-gray-200 mt-16">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold text-gray-800">Recent R&D Projects</h3>
@@ -441,7 +427,7 @@ const RandDPage = () => {
               href="https://coal.nic.in/en/tenders"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-semibold text-blue-600 hover:underline"
+              className="text-sm font-semibold text-orange-500 hover:underline"
             >
               View All Projects
             </a>

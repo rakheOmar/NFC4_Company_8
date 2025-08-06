@@ -1,6 +1,6 @@
 /* --- Global Styles & Variables --- */
 .leaflet-container {
-  z-index: -1;
+  z-index: 0;
 }
 :root {
     --primary-color: #E97425;

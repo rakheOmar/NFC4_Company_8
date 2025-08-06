@@ -23,8 +23,6 @@ export const NavigationSheet = () => {
     navigate(path);
   };
 
-  const closeSheet = () => setOpen(false);
-
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -45,10 +43,34 @@ export const NavigationSheet = () => {
         </VisuallyHidden>
 
         <div className="space-y-8">
-          <Logo />
+          <div onClick={() => handleNavigation("/")} className="cursor-pointer">
+            <Logo />
+          </div>
 
-          {/* All navigation links are removed from here */}
-          <div className="space-y-4">{/* No links to display */}</div>
+          {/* --- ADDED: Navigation Links for Mobile --- */}
+          <div className="space-y-2 flex flex-col items-start">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/rnd")}
+            >
+              R&D
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/verify-log")}
+            >
+              Verify Log
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/support")}
+            >
+              Support
+            </Button>
+          </div>
         </div>
 
         {!user && (

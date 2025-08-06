@@ -17,6 +17,8 @@ import SignUp from "@/pages/SignUp";
 import SurveyPage from "@/pages/SurveyPage";
 import ThankYou from "@/pages/ThankYou";
 import SentimentSummary from "@/components/SentimentSummary";
+import RandDPage from "@/components/RandDPage";
+import RndTipsPage from "@/components/RndTipsPage";
 
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
@@ -112,20 +114,25 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/worker-dashboard" element={<WorkerDashboard />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/dashboard" element={<MineOpsDashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/worker-dashboard" element={<WorkerDashboard />} />
+
           <Route path="/sim" element={<SimulationDashboard />} />
+          <Route path="/log-verify" element={<LogExplorer />} />
+          <Route path="/sentiment-summary" element={<SentimentSummary />} />
+          <Route path="/RnD" element={<RandDPage />} />
+          <Route path="/RnD-tips" element={<RndTipsPage />} />
+
           <Route path="/careers" element={<Careers />} />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/thank-you" element={<ThankYou />} />
-          <Route path="/sentiment-summary" element={<SentimentSummary />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/log-verify" element={<LogExplorer />} />
         </Routes>
       </Layout>
     </Router>

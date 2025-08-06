@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaUsers, FaChartLine, FaMapMarkedAlt, FaShieldAlt, FaSearch, FaDownload, FaPlus, FaEye, FaCog, FaTimes, FaChartBar, FaCheckCircle, FaShieldVirus, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaUsers,
+  FaChartLine,
+  FaMapMarkedAlt,
+  FaShieldAlt,
+  FaSearch,
+  FaDownload,
+  FaPlus,
+  FaEye,
+  FaCog,
+  FaTimes,
+  FaChartBar,
+  FaCheckCircle,
+  FaShieldVirus,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 import axios from "@/lib/axios"; // Assuming axios is correctly configured for API calls.
 
 // Reusable Shadcn-inspired Info Card component
@@ -17,12 +32,8 @@ const AdminInfoCard = ({ title, value, subtext, icon, trend }) => {
         <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
           {value}
         </div>
-        {trend && (
-          <div className="text-sm text-green-600 dark:text-green-400 mt-2">{trend}</div>
-        )}
-        {subtext && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">{subtext}</div>
-        )}
+        {trend && <div className="text-sm text-green-600 dark:text-green-400 mt-2">{trend}</div>}
+        {subtext && <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">{subtext}</div>}
       </div>
     </div>
   );
@@ -31,9 +42,24 @@ const AdminInfoCard = ({ title, value, subtext, icon, trend }) => {
 // Reusable Header component
 const Header = ({ dashboardType }) => {
   return (
-    <div className="space-y-1 mb-6"> {/* Removed motion.div as per example */}
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{dashboardType} Dashboard</h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400">Overview and management tools</p>
+    <div className="flex justify-between items-center mb-6">
+           {" "}
+      <div>
+               {" "}
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          {dashboardType} Dashboard
+        </h1>
+               {" "}
+        <p className="text-sm text-gray-500 dark:text-gray-400">Overview and management tools</p>   
+         {" "}
+      </div>
+      <a
+        href="/sim"
+        className="px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+      >
+                Go to Simulation      {" "}
+      </a>
+         {" "}
     </div>
   );
 };
@@ -199,13 +225,16 @@ const WorkerManagement = () => {
             <tbody>
               {filteredWorkers.length > 0 ? (
                 filteredWorkers.map((worker) => (
-                  <tr key={worker.id} className="border-b border-gray-200 hover:bg-gray-50 dark:border-slate-800 dark:hover:bg-slate-800">
+                  <tr
+                    key={worker.id}
+                    className="border-b border-gray-200 hover:bg-gray-50 dark:border-slate-800 dark:hover:bg-slate-800"
+                  >
                     <td className="py-4 px-2">
                       <div className="flex items-center gap-3">
                         <img
                           src={
                             worker.avatar ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name || 'Unnamed')}&background=random`
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name || "Unnamed")}&background=random`
                           }
                           alt={worker.name}
                           className="w-10 h-10 rounded-full object-cover"
@@ -217,8 +246,12 @@ const WorkerManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">{worker.id || "N/A"}</td>
-                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">{worker.role || "N/A"}</td>
+                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">
+                      {worker.id || "N/A"}
+                    </td>
+                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">
+                      {worker.role || "N/A"}
+                    </td>
                     <td className="py-4 px-2">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusClasses(worker.status)}`}
@@ -226,7 +259,9 @@ const WorkerManagement = () => {
                         {worker.status}
                       </span>
                     </td>
-                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">{worker.lastSeen || "N/A"}</td>
+                    <td className="py-4 px-2 text-gray-700 dark:text-gray-300">
+                      {worker.lastSeen || "N/A"}
+                    </td>
                     <td className="py-4 px-2">
                       <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400">
                         <FaEye className="cursor-pointer hover:text-orange-500" />
@@ -260,7 +295,10 @@ const WorkerManagement = () => {
             <h3 className="text-xl font-bold text-gray-800 mb-6 dark:text-white">Add New Worker</h3>
             <form onSubmit={handleAddWorkerSubmit} className="space-y-4">
               <div>
-                <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label
+                  htmlFor="fullname"
+                  className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300"
+                >
                   Full Name
                 </label>
                 <input
@@ -274,7 +312,10 @@ const WorkerManagement = () => {
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300"
+                >
                   Email
                 </label>
                 <input
@@ -288,7 +329,10 @@ const WorkerManagement = () => {
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300"
+                >
                   Password
                 </label>
                 <input
@@ -319,7 +363,10 @@ const WorkerManagement = () => {
                 />
               </div>
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300"
+                >
                   Role
                 </label>
                 <input
@@ -375,40 +422,57 @@ const minesData = [
 // Reusable Mine Card Component
 const MineCard = ({ mine }) => {
   const statusClasses =
-    mine.status === "Safe" ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+    mine.status === "Safe"
+      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-md flex flex-col gap-5 dark:bg-slate-900 dark:text-gray-200"> {/* Increased padding and gap */}
+    <div className="bg-white p-8 rounded-xl shadow-md flex flex-col gap-5 dark:bg-slate-900 dark:text-gray-200">
+      {" "}
+      {/* Increased padding and gap */}
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white">{mine.name}</h3> {/* Increased font size */}
-          <p className="text-base text-gray-500 flex items-center gap-1 dark:text-gray-400"> {/* Increased font size */}
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white">{mine.name}</h3>{" "}
+          {/* Increased font size */}
+          <p className="text-base text-gray-500 flex items-center gap-1 dark:text-gray-400">
+            {" "}
+            {/* Increased font size */}
             <FaMapMarkerAlt className="h-5 w-5" /> {mine.location} {/* Increased icon size */}
           </p>
         </div>
-        <span className={`px-4 py-2 text-sm font-bold rounded-full ${statusClasses}`}> {/* Increased padding and font size */}
+        <span className={`px-4 py-2 text-sm font-bold rounded-full ${statusClasses}`}>
+          {" "}
+          {/* Increased padding and font size */}
           {mine.status}
         </span>
       </div>
-
-      <div className="grid grid-cols-2 gap-5 text-center"> {/* Increased gap */}
+      <div className="grid grid-cols-2 gap-5 text-center">
+        {" "}
+        {/* Increased gap */}
         <div>
-          <p className="text-base text-gray-500 dark:text-gray-400">Active Workers</p> {/* Increased font size */}
+          <p className="text-base text-gray-500 dark:text-gray-400">Active Workers</p>{" "}
+          {/* Increased font size */}
           <p className="text-3xl font-bold text-orange-500">{mine.activeWorkers}</p>
         </div>
         <div>
-          <p className="text-base text-gray-500 dark:text-gray-400">Production Today</p> {/* Increased font size */}
+          <p className="text-base text-gray-500 dark:text-gray-400">Production Today</p>{" "}
+          {/* Increased font size */}
           <p className="text-3xl font-bold text-orange-500">{mine.production}</p>
         </div>
       </div>
-
-      <div className="space-y-4"> {/* Increased space-y */}
+      <div className="space-y-4">
+        {" "}
+        {/* Increased space-y */}
         <div>
-          <div className="flex justify-between text-base font-semibold mb-1"> {/* Increased font size */}
+          <div className="flex justify-between text-base font-semibold mb-1">
+            {" "}
+            {/* Increased font size */}
             <span className="text-gray-600 dark:text-gray-300">Capacity Utilization</span>
             <span className="text-gray-800 dark:text-white">{mine.capacity}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3"> {/* Increased height */}
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            {" "}
+            {/* Increased height */}
             <div
               className="bg-orange-500 h-3 rounded-full"
               style={{ width: `${mine.capacity}%` }}
@@ -416,11 +480,15 @@ const MineCard = ({ mine }) => {
           </div>
         </div>
         <div>
-          <div className="flex justify-between text-base font-semibold mb-1"> {/* Increased font size */}
+          <div className="flex justify-between text-base font-semibold mb-1">
+            {" "}
+            {/* Increased font size */}
             <span className="text-gray-600 dark:text-gray-300">Environmental Score</span>
             <span className="text-gray-800 dark:text-white">{mine.envScore}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3"> {/* Increased height */}
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            {" "}
+            {/* Increased height */}
             <div
               className="bg-orange-500 h-3 rounded-full"
               style={{ width: `${mine.envScore}%` }}
@@ -428,8 +496,9 @@ const MineCard = ({ mine }) => {
           </div>
         </div>
       </div>
-
-      <div className="border-t border-gray-200 pt-4 text-base text-gray-500 dark:border-slate-800 dark:text-gray-400"> {/* Increased padding and font size */}
+      <div className="border-t border-gray-200 pt-4 text-base text-gray-500 dark:border-slate-800 dark:text-gray-400">
+        {" "}
+        {/* Increased padding and font size */}
         Last Inspection: {mine.lastInspection}
       </div>
     </div>
@@ -438,7 +507,9 @@ const MineCard = ({ mine }) => {
 
 const MinesDashboard = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> {/* Adjusted grid to always show 1 or 2 columns */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {" "}
+      {/* Adjusted grid to always show 1 or 2 columns */}
       {minesData.map((mine) => (
         <MineCard key={mine.name} mine={mine} />
       ))}
@@ -449,7 +520,9 @@ const MinesDashboard = () => {
 // LocationsDashboard (Placeholder)
 const LocationsDashboard = () => (
   <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Locations Dashboard</h2>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      Locations Dashboard
+    </h2>
     <p className="text-gray-700 dark:text-gray-300">
       Manage and visualize all operational locations.
     </p>
@@ -588,13 +661,16 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 font-inter">
       {/* The main content wrapper now has max-width and horizontal padding */}
-      <div className="max-w-screen-xl mx-auto px-[10%] py-8"> {/* Adjusted to px-[10%] */}
+      <div className="max-w-screen-xl mx-auto px-[10%] py-8">
+        {" "}
+        {/* Adjusted to px-[10%] */}
         <Header dashboardType="Admin" />
-
         {/* Info Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {loading ? (
-            <div className="col-span-4 text-center py-4 text-gray-500 dark:text-gray-400">Loading dashboard data...</div>
+            <div className="col-span-4 text-center py-4 text-gray-500 dark:text-gray-400">
+              Loading dashboard data...
+            </div>
           ) : (
             <>
               <motion.div
@@ -656,7 +732,6 @@ const AdminDashboard = () => {
             </>
           )}
         </div>
-
         {/* Tab Navigation */}
         <nav className="border-b border-gray-200 dark:border-slate-800">
           <div className="flex space-x-2">
@@ -665,9 +740,10 @@ const AdminDashboard = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`relative py-3 px-5 text-sm font-medium transition-all duration-200 focus:outline-none 
-                  ${activeTab === tab
-                    ? "text-orange-500" // Changed to orange-500
-                    : "text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200"
+                  ${
+                    activeTab === tab
+                      ? "text-orange-500" // Changed to orange-500
+                      : "text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200"
                   }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -686,7 +762,6 @@ const AdminDashboard = () => {
             ))}
           </div>
         </nav>
-
         {/* Main Content Area with AnimatePresence for tab transitions */}
         <motion.main
           initial={{ opacity: 0, y: 20 }}
@@ -694,7 +769,9 @@ const AdminDashboard = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="mt-8"
         >
-          <AnimatePresence mode="wait"> {/* 'wait' mode ensures exit animation completes before new component mounts */}
+          <AnimatePresence mode="wait">
+            {" "}
+            {/* 'wait' mode ensures exit animation completes before new component mounts */}
             <motion.div
               key={activeTab} // Key changes when activeTab changes, triggering animations
               variants={contentVariants}
