@@ -1,7 +1,6 @@
+// app/(app)/_layout.jsx
 import { Stack } from 'expo-router';
-// Import your custom header/footer components if you have them
-// import Navbar from '../../components/Navbar'; 
-// import Footer from '../../components/Footer';
+import React from 'react';
 
 export default function AppLayout() {
   return (
@@ -9,7 +8,8 @@ export default function AppLayout() {
       <Stack.Screen name="index" options={{ title: 'Home' }} />
       <Stack.Screen name="worker-dashboard" options={{ title: 'Worker Dashboard' }} />
       <Stack.Screen name="admin" options={{ title: 'Admin Dashboard' }} />
-      {/* ... Add Stack.Screen for all other main app routes ... */}
+      <Stack.Screen name="dashboard" options={{ title: 'MineOps Dashboard' }} />
+      <Stack.Screen name="sim" options={{ title: 'Simulation Dashboard' }} />
       <Stack.Screen name="careers" options={{ title: 'Careers' }} />
       <Stack.Screen name="survey" options={{ title: 'Survey' }} />
       <Stack.Screen name="thank-you" options={{ title: 'Thank You' }} />

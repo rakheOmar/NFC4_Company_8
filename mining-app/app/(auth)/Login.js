@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
 import { AnimatePresence, MotiView } from "moti";
 import Toast from "react-native-toast-message";
-import axios from "../lib/axios"; // Adjust path if needed
-import { useAuth } from "../context/AuthContext"; // Adjust path
+import axios from "../../lib/axios"; // Adjust path if needed
+import { useAuth } from"../context/AuthContext"; // Adjust path
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
