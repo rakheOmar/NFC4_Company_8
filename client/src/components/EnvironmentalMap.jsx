@@ -1,9 +1,17 @@
+
+/*
+================================================================================
+  3. EnvironmentalMap.js
+  - This component displays the Leaflet map.
+  - Gradients have been added to the container and loading state.
+================================================================================
+*/
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 
 // --- Helper Functions (No changes here) ---
-const getAqiInfo = (aqi) => {
+const getAqiInfoMap = (aqi) => {
   if (aqi === "-" || aqi === undefined) return { status: "N/A", color: "#9CA3AF" };
   const val = parseInt(aqi);
   if (val <= 50) return { status: "Good", color: "#22C55E" };
@@ -15,7 +23,7 @@ const getAqiInfo = (aqi) => {
 };
 
 const createAqiIcon = (aqi) => {
-  const aqiInfo = getAqiInfo(aqi);
+  const aqiInfo = getAqiInfoMap(aqi);
   const iconHtml = `<div style="background-color: ${aqiInfo.color};" class="w-10 h-10 flex items-center justify-center rounded-full text-white font-bold text-sm border-2 border-white shadow-lg">${aqi}</div>`;
   return L.divIcon({
     html: iconHtml,
@@ -30,7 +38,7 @@ const ZoneLayer = ({ selectedMarker }) => {
   const map = useMap();
   useEffect(() => {
     if (!selectedMarker) return;
-    const aqiInfo = getAqiInfo(selectedMarker.aqi);
+    const aqiInfo = getAqiInfoMap(selectedMarker.aqi);
     const zone = L.circle([selectedMarker.lat, selectedMarker.lon], {
       radius: 25000,
       color: aqiInfo.color,
@@ -75,14 +83,14 @@ const EnvironmentalMap = ({ markers, isLoading, center, zoom, selectedMarker, on
 
   if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-md text-center h-full flex items-center justify-center">
+      <div className="bg-gradient-to-br from-white to-gray-100 p-6 rounded-xl shadow-md text-center h-full flex items-center justify-center">
         Loading Map & Environmental Data...
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-2 rounded-xl shadow-md h-full relative">
+    <div className="bg-gradient-to-br from-white to-gray-100 p-2 rounded-xl shadow-md h-full relative">
       <MapContainer
         center={center}
         zoom={zoom}
@@ -115,7 +123,7 @@ const EnvironmentalMap = ({ markers, isLoading, center, zoom, selectedMarker, on
                 <h3 className="font-bold text-base mb-1">{marker.name}</h3>
                 <p className="text-sm">
                   AQI:{" "}
-                  <span className="font-bold" style={{ color: getAqiInfo(marker.aqi).color }}>
+                  <span className="font-bold" style={{ color: getAqiInfoMap(marker.aqi).color }}>
                     {marker.aqi}
                   </span>
                 </p>

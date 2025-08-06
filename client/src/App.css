@@ -1,4 +1,7 @@
 /* --- Global Styles & Variables --- */
+.leaflet-container {
+  z-index: -1;
+}
 :root {
     --primary-color: #E97425;
     --secondary-color: #6c757d;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaThermometerHalf, FaWind, FaSmog, FaMapMarkerAlt } from "react-icons/fa";
 
 // Helper function to interpret AQI value
-const getAqiInfo = (aqi) => {
+const getAqiInfoStatus = (aqi) => {
   if (aqi <= 50) return { status: "Good", className: "text-green-600 bg-green-100" };
   if (aqi <= 100) return { status: "Moderate", className: "text-yellow-800 bg-yellow-100" };
   if (aqi <= 150)
@@ -47,10 +47,10 @@ const EnvironmentalStatus = ({ data }) => {
   }, []); // Empty array ensures this effect runs only once when the component mounts
 
   // Determine the air quality status and style from the fetched data
-  const aqiInfo = aqiData ? getAqiInfo(aqiData.aqi) : null;
+  const aqiInfo = aqiData ? getAqiInfoStatus(aqiData.aqi) : null;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md h-full">
+    <div className="bg-gradient-to-br from-white to-gray-100 p-6 rounded-xl shadow-md h-full">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">Environmental Status</h3>
       <ul className="space-y-4">
         <li className="flex justify-between items-center">
@@ -89,3 +89,4 @@ const EnvironmentalStatus = ({ data }) => {
 };
 
 export default EnvironmentalStatus;
+

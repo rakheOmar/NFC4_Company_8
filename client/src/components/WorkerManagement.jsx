@@ -2,16 +2,15 @@ import React, { useEffect, useState } from "react";
 import { FaSearch, FaDownload, FaPlus, FaEye, FaCog, FaTimes } from "react-icons/fa";
 import axios from "@/lib/axios"; // Assuming axios is configured for your API endpoint
 
+// Helper function to get status badge classes
 const getStatusClasses = (status) => {
   switch (status) {
     case "Active":
-      return "bg-green-500 text-white"; // Tailwind green for active
+      return "bg-green-100 text-green-800";
     case "Offline":
-      return "bg-gray-400 text-white";
-    case "On Break":
-      return "bg-yellow-400 text-yellow-900"; // Tailwind yellow for on break
+      return "bg-gray-100 text-gray-800";
     default:
-      return "bg-gray-300 text-gray-700";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
@@ -22,31 +21,30 @@ const WorkerManagement = () => {
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [showAddWorkerModal, setShowAddWorkerModal] = useState(false);
 
-  // State for new worker form fields, updated to new requirements
+  // State for new worker form fields
   const [newWorker, setNewWorker] = useState({
     fullname: "",
     email: "",
     password: "",
     employeeId: "",
-    role: "",
+    role: "Worker", // Default role to worker
   });
 
-  // Function to fetch workers from the backend
+  // --- FIXED: Function to fetch workers from the backend ---
   const fetchWorkers = async () => {
     try {
       setLoading(true);
-
       const params = {};
+      // Pass status to the backend if a filter is selected
       if (statusFilter !== "All Status") {
         params.status = statusFilter;
       }
-
-      // Updated GET request to include the API prefix
+      // The endpoint is /api/v1/workers as per the provided backend files
       const res = await axios.get("/workers", { params });
       setWorkers(res.data || []);
     } catch (err) {
       console.error("Failed to fetch workers:", err);
-      // Optionally show a toast or message to the user
+      // In a real app, show a toast notification for the error
     } finally {
       setLoading(false);
     }
@@ -57,13 +55,13 @@ const WorkerManagement = () => {
     fetchWorkers();
   }, [statusFilter]);
 
-  // Filter workers based on search query (updated to use fullname and employeeId)
+  // --- FIXED: Filter workers based on search query using correct field names ---
   const filteredWorkers = workers.filter((worker) => {
-    const fullname = worker?.fullname || "";
-    const employeeId = worker?.employeeId || "";
+    const name = worker?.name || "";
+    const id = worker?.id || ""; // The backend sends 'id'
     return (
-      fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employeeId.toLowerCase().includes(searchQuery.toLowerCase())
+      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      id.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
 
@@ -77,7 +75,6 @@ const WorkerManagement = () => {
   const handleAddWorkerSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Basic validation, updated for new fields
       if (
         !newWorker.fullname ||
         !newWorker.email ||
@@ -85,34 +82,18 @@ const WorkerManagement = () => {
         !newWorker.employeeId ||
         !newWorker.role
       ) {
-        alert(
-          "Please fill in all required fields: Full Name, Email, Password, Employee ID, and Role."
-        );
+        alert("Please fill in all required fields.");
         return;
       }
-
-      // Add lastSeen field with current timestamp (assuming backend still uses this)
-      const workerDataToSubmit = {
-        ...newWorker,
-        lastSeen: new Date().toISOString(), // ISO string for consistent date handling
-      };
-
-      // Corrected POST request to use the /api/v1/workers endpoint
-      await axios.post("/users/register ", workerDataToSubmit);
-      alert("Worker added successfully!"); // Replace with a proper toast/modal in a real app
-      setShowAddWorkerModal(false); // Close the modal
-      setNewWorker({
-        // Reset form fields to initial empty state
-        fullname: "",
-        email: "",
-        password: "",
-        employeeId: "",
-        role: "",
-      });
+      // This POST request is for a different endpoint, assuming it's correct
+      await axios.post("/users/register", newWorker);
+      alert("Worker added successfully!");
+      setShowAddWorkerModal(false);
+      setNewWorker({ fullname: "", email: "", password: "", employeeId: "", role: "Worker" });
       fetchWorkers(); // Refresh the worker list
     } catch (err) {
       console.error("Failed to add worker:", err);
-      alert("Failed to add worker. Please try again."); // Replace with a proper toast/modal
+      alert("Failed to add worker. Please check the console for details.");
     }
   };
 
@@ -138,12 +119,13 @@ const WorkerManagement = () => {
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search workers by name or ID..." // Updated placeholder
+            placeholder="Search by name or employee ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
+        {/* --- FIXED: Removed "On Break" as it's not supported by the backend --- */}
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -152,19 +134,18 @@ const WorkerManagement = () => {
           <option>All Status</option>
           <option>Active</option>
           <option>Offline</option>
-          <option>On Break</option>
         </select>
       </div>
 
       {loading ? (
-        <div className="text-center py-4">Loading workers...</div>
+        <div className="text-center py-4 text-gray-600">Loading workers...</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
             <thead className="border-b-2 border-gray-200">
               <tr>
-                {/* Updated table headers */}
-                {["Full Name", "Email", "Employee ID", "Role", "Last Seen", "Actions"].map((h) => (
+                {/* --- FIXED: Updated table headers to reflect API data --- */}
+                {["Worker", "Employee ID", "Role", "Status", "Last Seen", "Actions"].map((h) => (
                   <th
                     key={h}
                     className="pb-4 text-sm font-bold text-gray-500 uppercase tracking-wider px-2"
@@ -177,28 +158,37 @@ const WorkerManagement = () => {
             <tbody>
               {filteredWorkers.length > 0 ? (
                 filteredWorkers.map((worker) => (
-                  <tr key={worker.employeeId} className="border-b border-gray-200 hover:bg-gray-50">
+                  <tr key={worker.id} className="border-b border-gray-200 hover:bg-gray-50">
                     <td className="py-4 px-2">
                       <div className="flex items-center gap-3">
                         <img
-                          src={worker.avatar || "https://placehold.co/40x40/cccccc/333333?text=U"} // Placeholder for avatar
-                          alt={worker.fullname}
+                          src={
+                            worker.avatar ||
+                            `https://ui-avatars.com/api/?name=${worker.name}&background=random`
+                          }
+                          alt={worker.name}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                         <div>
+                          {/* --- FIXED: Use `worker.name` --- */}
                           <div className="font-semibold text-gray-800">
-                            {worker.fullname || "Unnamed Worker"}
+                            {worker.name || "Unnamed Worker"}
                           </div>
-                          <div className="text-sm text-gray-500">{worker.employeeId || "N/A"}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-2 text-gray-700">{worker.email || "N/A"}</td>
-                    <td className="py-4 px-2 text-gray-700">{worker.employeeId || "N/A"}</td>
+                    {/* --- FIXED: Use `worker.id` for Employee ID --- */}
+                    <td className="py-4 px-2 text-gray-700">{worker.id || "N/A"}</td>
                     <td className="py-4 px-2 text-gray-700">{worker.role || "N/A"}</td>
-                    <td className="py-4 px-2 text-gray-700">
-                      {worker.lastSeen ? new Date(worker.lastSeen).toLocaleString() : "N/A"}
+                    <td className="py-4 px-2">
+                      {/* --- FIXED: Added a status badge --- */}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusClasses(worker.status)}`}
+                      >
+                        {worker.status}
+                      </span>
                     </td>
+                    <td className="py-4 px-2 text-gray-700">{worker.lastSeen || "N/A"}</td>
                     <td className="py-4 px-2">
                       <div className="flex items-center gap-4 text-gray-500">
                         <FaEye className="cursor-pointer hover:text-blue-600" />
@@ -210,9 +200,7 @@ const WorkerManagement = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center py-4 text-gray-500">
-                    {" "}
-                    {/* Updated colspan */}
-                    No workers found
+                    No workers found for the selected criteria.
                   </td>
                 </tr>
               )}
@@ -243,7 +231,7 @@ const WorkerManagement = () => {
                   name="fullname"
                   value={newWorker.fullname}
                   onChange={handleNewWorkerChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   required
                 />
               </div>
@@ -257,7 +245,7 @@ const WorkerManagement = () => {
                   name="email"
                   value={newWorker.email}
                   onChange={handleNewWorkerChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   required
                 />
               </div>
@@ -271,7 +259,7 @@ const WorkerManagement = () => {
                   name="password"
                   value={newWorker.password}
                   onChange={handleNewWorkerChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   required
                 />
               </div>
@@ -288,7 +276,7 @@ const WorkerManagement = () => {
                   name="employeeId"
                   value={newWorker.employeeId}
                   onChange={handleNewWorkerChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   required
                 />
               </div>
@@ -302,14 +290,13 @@ const WorkerManagement = () => {
                   name="role"
                   value={newWorker.role}
                   onChange={handleNewWorkerChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   required
                 />
               </div>
-              {/* Removed PPE Status, Status, and Avatar URL fields */}
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
               >
                 Add Worker
               </button>

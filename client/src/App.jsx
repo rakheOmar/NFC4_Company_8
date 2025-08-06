@@ -114,7 +114,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/mine-dashboard" element={<MineOpsDashboard />} />
+          <Route path="/dashboard" element={<MineOpsDashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/sim" element={<SimulationDashboard />} />

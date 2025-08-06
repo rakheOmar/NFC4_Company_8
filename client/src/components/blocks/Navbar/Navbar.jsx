@@ -36,8 +36,10 @@ const Navbar = () => {
       <nav className="h-16 bg-background border-b">
         <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
-            <Logo />
-            {/* The navigation menu (NavMenu) is removed */}
+            {/* The Logo is now clickable and navigates to the home page */}
+            <div onClick={() => navigate("/")} className="cursor-pointer">
+              <Logo />
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {user ? (
